@@ -1,95 +1,67 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Italian Learning Companion</title>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Italian Learning Companion V2</title>
 <style>
-body{
-  font-family:Arial,sans-serif;
-  max-width:900px;
-  margin:auto;
-  padding:20px;
-  background:#f4f4f4;
-}
-.card{
-  background:white;
-  padding:15px;
-  border-radius:10px;
-  margin-bottom:15px;
-}
-textarea{
-  width:100%;
-  height:200px;
-}
-button{
-  padding:10px;
-}
-</style>
-</head>
+body{font-family:Arial,sans-serif;background:#121212;color:#fff;max-width:1100px;margin:auto;padding:20px}
+.card{background:#1e1e1e;padding:16px;border-radius:12px;margin:12px 0}
+input,textarea,select{width:100%;padding:10px;margin:6px 0;background:#2a2a2a;color:#fff;border:1px solid #444}
+button{padding:10px 14px;margin:4px}
+.progress{height:22px;background:#333;border-radius:10px;overflow:hidden}.bar{height:100%;background:#4caf50;width:0%}
+</style></head>
 <body>
+<h1>🇮🇹 Italian Learning Companion V2</h1>
+<div class="card"><h2>Dashboard</h2>
+<p id="count">Words Learned: 0</p>
+<p id="coverage">1000 Word Coverage: 0%</p>
+<div class="progress"><div class="bar" id="bar"></div></div></div>
 
-<h1>🇮🇹 Italian Learning Companion</h1>
-
-<div class="card">
-<h2>Progress</h2>
-<p id="count">Words learned: 0</p>
-
-<input id="word" placeholder="New Italian word">
+<div class="card"><h2>Vocabulary Tracker</h2>
+<input id="word" placeholder="Add Italian word">
 <button onclick="addWord()">Add Word</button>
+<ul id="list"></ul></div>
 
-<ul id="words"></ul>
-</div>
+<div class="card"><h2>Modules</h2>
+<ul>
+<li>Conversation Fluency</li>
+<li>Listening Practice</li>
+<li>Speaking Practice</li>
+<li>Patente B</li>
+<li>Patente C</li>
+<li>CQC</li>
+</ul></div>
 
-<div class="card">
-<h2>Lesson Prompt</h2>
-
-<textarea id="prompt">
-Create an Italian lesson for me.
-
+<div class="card"><h2>ChatGPT Lesson Prompt</h2>
+<textarea id="prompt" rows="12">Create an Italian lesson for a complete beginner.
 Goals:
-- Conversation Italian
-- Patente exam preparation
-- Listening friendly for @Voice Reader
-
-Include:
-1. Story
-2. Dialogue
-3. Pronunciation
-4. Listening version
-5. Comprehension questions
-6. Speaking practice
-</textarea>
-
-</div>
+- Conversation fluency
+- Listening practice
+- Speaking practice
+- Patente B
+- Patente C
+- CQC
+Include story, dialogue, vocabulary, pronunciation, listening text, speaking drills, and quiz.</textarea>
+<button onclick="copyPrompt()">Copy Prompt</button></div>
 
 <script>
-let words = JSON.parse(localStorage.getItem("words") || "[]");
-
+let words=JSON.parse(localStorage.getItem('words')||'[]');
 function render(){
-  document.getElementById("count").innerText =
-    "Words learned: " + words.length;
-
-  document.getElementById("words").innerHTML =
-    words.map(w => "<li>"+w+"</li>").join("");
+document.getElementById('count').innerText='Words Learned: '+words.length;
+let pct=Math.min(100,(words.length/1000)*100);
+document.getElementById('coverage').innerText='1000 Word Coverage: '+pct.toFixed(1)+'%';
+document.getElementById('bar').style.width=pct+'%';
+document.getElementById('list').innerHTML=words.map(w=>'<li>'+w+'</li>').join('');
 }
-
 function addWord(){
-  let word = document.getElementById("word").value.trim();
-
-  if(!word) return;
-
-  words.push(word);
-
-  localStorage.setItem("words", JSON.stringify(words));
-
-  document.getElementById("word").value="";
-
-  render();
-}
-
+let w=document.getElementById('word').value.trim();
+if(!w)return;
+words.push(w);
+localStorage.setItem('words',JSON.stringify(words));
+document.getElementById('word').value='';
 render();
-</script>
-
-</body>
-</html>
+}
+function copyPrompt(){
+navigator.clipboard.writeText(document.getElementById('prompt').value);
+alert('Prompt copied');
+}
+render();
+</script></body></html>
