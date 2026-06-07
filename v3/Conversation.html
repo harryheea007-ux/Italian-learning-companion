@@ -1,1 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conversation Fluency Trainer</title>
 
+<style>
+
+body{
+background:#111;
+color:white;
+font-family:Arial,sans-serif;
+padding:20px;
+}
+
+.card{
+background:#222;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+select,input{
+width:100%;
+padding:12px;
+margin-top:10px;
+background:#333;
+color:white;
+border:none;
+border-radius:8px;
+}
+
+button{
+padding:12px;
+margin-top:10px;
+background:#0a84ff;
+color:white;
+border:none;
+border-radius:8px;
+width:100%;
+}
+
+.chat{
+background:#1b1b1b;
+padding:15px;
+border-radius:10px;
+margin-top:15px;
+max-height:400px;
+overflow-y:auto;
+}
+
+.user{
+background:#0a84ff;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
+}
+
+.ai{
+background:#333;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
+}
+
+.stats{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.stat{
+background:#333;
+padding:15px;
+border-radius:10px;
+text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🗣 Conversation Fluency Trainer</h1>
+
+<div class="card">
+
+<h2>Scenario</h2>
+
+<select id="scenario">
+
+<option>Restaurant</option>
+
+<option>Shopping</option>
+
+<option>Job Interview</option>
+
+<option>Truck Driver</option>
+
+<option>Daily Life</option>
+
+<option>Government Office</option>
+
+</select>
+
+</div>
+
+<div class="card">
+
+<h2>Progress</h2>
+
+<div class="stats">
+
+<div class="stat">
+XP
+<br>
+<span id="xp">0</span>
+</div>
+
+<div class="stat">
+Level
+<br>
+<span id="level">A1</span>
+</div>
+
+<div class="stat">
+Conversations
+<br>
+<span id="conversations">0</span>
+</div>
+
+<div class="stat">
+Fluency
+<br>
+<span id="fluency">0%</span>
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Conversation</h2>
+
+<div id="chat" class="chat"></div>
+
+<input
+id="message"
+placeholder="Type in Italian..."
+>
+
+<button onclick="sendMessage()">
+Send
+</button>
+
+</div><script>
+
+let xp =
+parseInt(localStorage.getItem("conversationXP")) || 0;
+
+let conversations =
+parseInt(localStorage.getItem("conversationCount")) || 0;
+
+let fluency =
+parseInt(localStorage.getItem("conversationFluency")) || 0;
+
+function updateStats(){
+
+document.getElementById("xp").innerText = xp;
+
+document.getElementById("conversations").innerText =
+conversations;
+
+document.getElementById("fluency").innerText =
+fluency + "%";
+
+let level = "A1";
+
+if(xp > 200) level = "A2";
+if(xp > 500) level = "B1";
+if(xp > 1000) level = "B2";
+
+document.getElementById("level").innerText =
+level;
+
+}
+
+const responses = {
+
+"Restaurant":[
+"Ciao! Vuoi vedere il menu?",
+"Cosa desideri ordinare?",
+"Preferisci acqua o vino?"
+],
+
+"Shopping":[
+"Buongiorno, come posso aiutarti?",
+"Che cosa stai cercando?",
+"Hai bisogno di una taglia diversa?"
+],
+
+"Job Interview":[
+"Parlami di te.",
+"Perché vuoi questo lavoro?",
+"Hai esperienza lavorativa?"
+],
+
+"Truck Driver":[
+"Hai una patente C?",
+"Hai il certificato CQC?",
+"Quanti anni di esperienza hai?"
+],
+
+"Daily Life":[
+"Come stai oggi?",
+"Cosa hai fatto ieri?",
+"Cosa farai domani?"
+],
+
+"Government Office":[
+"Posso vedere i documenti?",
+"Hai un appuntamento?",
+"Qual è il motivo della visita?"
+]
+
+};
+
+function scoreMessage(text){
+
+let score = 0;
+
+let words = text.trim().split(" ");
+
+score += words.length * 5;
+
+if(text.length > 20)
+score += 10;
+
+if(text.includes("sono"))
+score += 10;
+
+if(text.includes("ho"))
+score += 10;
+
+if(text.includes("vorrei"))
+score += 15;
+
+return Math.min(score,100);
+
+}
+
+function correction(text){
+
+if(text.toLowerCase() === "io andare lavoro"){
+return "Correzione: Io vado al lavoro.";
+}
+
+if(text.toLowerCase() === "io avere fame"){
+return "Correzione: Ho fame.";
+}
+
+return null;
+
+}
+
+function sendMessage(){
+
+let input =
+document.getElementById("message");
+
+let text =
+input.value.trim();
+
+if(!text) return;
+
+let chat =
+document.getElementById("chat");
+
+chat.innerHTML +=
+'<div class="user">'+text+'</div>';
+
+let fix =
+correction(text);
+
+if(fix){
+
+chat.innerHTML +=
+'<div class="ai">'+fix+'</div>';
+
+}
+
+let scenario =
+document.getElementById("scenario").value;
+
+let options =
+responses[scenario];
+
+let aiReply =
+options[
+Math.floor(
+Math.random() * options.length
+)
+];
+
+chat.innerHTML +=
+'<div class="ai">'+aiReply+'</div>';
+
+fluency =
+Math.round(
+(fluency + scoreMessage(text))
+/ 2
+);
+
+xp += 10;
+
+conversations++;
+
+localStorage.setItem(
+"conversationXP",
+xp
+);
+
+localStorage.setItem(
+"conversationCount",
+conversations
+);
+
+localStorage.setItem(
+"conversationFluency",
+fluency
+);
+
+updateStats();
+
+input.value = "";
+
+chat.scrollTop =
+chat.scrollHeight;
+
+}
+
+updateStats();
+
+</script>
+
+</body>
+</html>
