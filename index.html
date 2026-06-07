@@ -15,48 +15,19 @@ body{
 }
 
 .container{
-    max-width:1000px;
+    max-width:900px;
     margin:auto;
-}
-
-h1{
-    text-align:center;
 }
 
 .card{
     background:#1d1d1d;
     padding:20px;
-    margin:15px 0;
-    border-radius:12px;
+    margin:20px 0;
+    border-radius:15px;
 }
 
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:12px;
-}
-
-a.button{
-    display:block;
-    text-align:center;
-    padding:14px;
-    background:#2b2b2b;
-    border-radius:10px;
-    text-decoration:none;
-    color:white;
-    font-weight:bold;
-}
-
-a.button:hover{
-    background:#3a3a3a;
-}
-
-input, textarea{
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    border-radius:8px;
-    border:none;
+h1,h2{
+    margin:0 0 10px 0;
 }
 
 button{
@@ -64,13 +35,27 @@ button{
     border:none;
     border-radius:8px;
     cursor:pointer;
-    background:green;
+    margin:6px 0;
+    width:100%;
+    font-size:16px;
+    background:#2d6cdf;
     color:white;
-    font-weight:bold;
+}
+
+button:hover{
+    background:#1f4fb0;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:8px;
+    border:none;
 }
 
 .progress{
-    height:18px;
+    height:20px;
     background:#333;
     border-radius:20px;
     overflow:hidden;
@@ -81,9 +66,16 @@ button{
     width:0%;
     background:green;
 }
-.small{
-    font-size:14px;
-    opacity:0.8;
+
+.module{
+    background:#2b2b2b;
+    padding:15px;
+    border-radius:10px;
+    margin:10px 0;
+}
+
+a{
+    text-decoration:none;
 }
 </style>
 </head>
@@ -96,23 +88,23 @@ button{
 
 <!-- DASHBOARD -->
 <div class="card">
-<h2>📊 Dashboard</h2>
+<h2>Learning Dashboard</h2>
 
 <p>Words Learned: <span id="count">0</span></p>
-<p>XP: <span id="xp">0</span></p>
 
 <div class="progress">
 <div class="progress-bar" id="bar"></div>
 </div>
 
-<p id="percent">Progress: 0%</p>
+<p id="coverage">1000 Word Goal Coverage: 0%</p>
 </div>
 
 <!-- VOCAB -->
 <div class="card">
-<h2>📚 Vocabulary Tracker</h2>
+<h2>Vocabulary Tracker</h2>
 
 <input id="wordInput" placeholder="Add Italian word">
+
 <button onclick="addWord()">Add Word</button>
 
 <ul id="wordList"></ul>
@@ -120,115 +112,66 @@ button{
 
 <!-- MODULES -->
 <div class="card">
-<h2>📘 Learning Modules</h2>
+<h2>Modules</h2>
 
-<div class="grid">
+<a href="v3/conversation.html"><button>🗣 Conversation Fluency</button></a>
+<a href="v3/listening.html"><button>🎧 Listening Practice</button></a>
+<a href="v3/speaking.html"><button>🎤 Speaking Practice</button></a>
 
-<a class="button" href="Conversation.html">🗣 Conversation</a>
-<a class="button" href="Listening.html">🎧 Listening</a>
-<a class="button" href="speaking.html">🎤 Speaking</a>
+<a href="v3/patente-b.html"><button>🚗 Patente B Exam Mode</button></a>
+<a href="v3/patente-c.html"><button>🚚 Patente C Exam Mode</button></a>
+<a href="v3/cqc.html"><button>🏢 CQC Exam Mode</button></a>
 
-<a class="button" href="vocabulary.html">📚 Vocabulary Page</a>
-<a class="button" href="lessons.html">📖 Lessons</a>
-<a class="button" href="lesson1.html">📘 Lesson 1</a>
-
-</div>
-</div>
-
-<!-- EXAM MODES -->
-<div class="card">
-<h2>🚦 Exam Modes</h2>
-
-<div class="grid">
-
-<a class="button" href="Patente-b.html">🚗 Patente B Exam</a>
-<a class="button" href="patente-c.html">🚚 Patente C Exam</a>
-<a class="button" href="cqc.html">🏢 CQC Exam</a>
-
-</div>
-</div>
-
-<!-- AI LESSON PROMPT SYSTEM -->
-<div class="card">
-<h2>🤖 AI Lesson Generator</h2>
-
-<p class="small">Create structured lesson prompts for practice.</p>
-
-<textarea id="prompt" rows="6" placeholder="Write or generate your Italian lesson request..."></textarea>
-
-<button onclick="savePrompt()">Save Prompt</button>
-<button onclick="clearPrompt()">Clear</button>
-
-<p id="saved" class="small"></p>
 </div>
 
 <!-- MISSION -->
 <div class="card">
-<h2>🎯 Mission</h2>
+<h2>Current Mission</h2>
+
 <p>
-Reach 1000 Italian words + fluency + pass Patente B → C → CQC
+Reach 1000 Italian words → build fluency → pass Patente B → Patente C → CQC.
 </p>
 </div>
 
 </div>
 
 <script>
-
-// LOAD WORDS
 let words = JSON.parse(localStorage.getItem("words")) || [];
 
-function update(){
+function updateUI(){
     document.getElementById("count").innerText = words.length;
-
-    let xp = words.length * 10;
-    document.getElementById("xp").innerText = xp;
 
     let percent = (words.length / 1000) * 100;
 
     document.getElementById("bar").style.width = percent + "%";
-    document.getElementById("percent").innerText = "Progress: " + percent.toFixed(1) + "%";
+
+    document.getElementById("coverage").innerText =
+    "1000 Word Goal Coverage: " + percent.toFixed(1) + "%";
 
     let list = document.getElementById("wordList");
     list.innerHTML = "";
 
-    words.forEach(w=>{
-        let li = document.createElement("li");
-        li.textContent = w;
+    words.forEach(word=>{
+        let li=document.createElement("li");
+        li.textContent=word;
         list.appendChild(li);
     });
 }
 
-// ADD WORD
 function addWord(){
-    let input = document.getElementById("wordInput");
+    let input=document.getElementById("wordInput");
 
-    if(input.value.trim() !== ""){
+    if(input.value.trim()!=""){
         words.push(input.value.trim());
+
         localStorage.setItem("words", JSON.stringify(words));
-        input.value = "";
-        update();
+
+        input.value="";
+        updateUI();
     }
 }
 
-// AI PROMPT SAVE
-function savePrompt(){
-    let p = document.getElementById("prompt").value;
-    localStorage.setItem("lessonPrompt", p);
-    document.getElementById("saved").innerText = "Prompt saved locally ✔";
-}
-
-function clearPrompt(){
-    localStorage.removeItem("lessonPrompt");
-    document.getElementById("prompt").value = "";
-    document.getElementById("saved").innerText = "Cleared ✔";
-}
-
-// LOAD SAVED PROMPT
-document.getElementById("prompt").value =
-localStorage.getItem("lessonPrompt") || "";
-
-update();
-
+updateUI();
 </script>
 
 </body>
