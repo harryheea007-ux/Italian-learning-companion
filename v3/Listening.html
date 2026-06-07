@@ -1,1 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>Italian Listening Trainer</title>
+
+<style>
+
+body{
+background:#111;
+color:white;
+font-family:Arial,sans-serif;
+padding:20px;
+}
+
+h1{
+text-align:center;
+}
+
+.card{
+background:#222;
+padding:15px;
+border-radius:10px;
+margin-top:15px;
+}
+
+textarea{
+width:100%;
+height:150px;
+background:#333;
+color:white;
+border:none;
+padding:10px;
+margin-top:10px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+background:#28a745;
+color:white;
+font-size:16px;
+}
+
+.score{
+font-size:20px;
+font-weight:bold;
+margin-top:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🎧 Italian Listening Trainer</h1>
+
+<div class="card">
+
+<h3>Paste Italian Text</h3>
+
+<textarea id="story"
+placeholder="Paste an Italian story from ChatGPT or any source here..."></textarea>
+
+<button onclick="saveStory()">
+Save Story
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>Listening Progress</h3>
+
+<p>Stories Saved:
+<span id="savedCount">0</span></p>
+
+<p>Listening XP:
+<span id="xp">0</span></p>
+
+<p class="score">
+Level:
+<span id="level">A1</span>
+</p>
+
+</div><script>
+
+let listeningXP =
+parseInt(localStorage.getItem("listeningXP")) || 0;
+
+let storiesSaved =
+parseInt(localStorage.getItem("storiesSaved")) || 0;
+
+function updateStats(){
+
+document.getElementById("savedCount").innerText =
+storiesSaved;
+
+document.getElementById("xp").innerText =
+listeningXP;
+
+let level = "A1";
+
+if(listeningXP > 200) level = "A2";
+if(listeningXP > 500) level = "B1";
+if(listeningXP > 1000) level = "B2";
+
+document.getElementById("level").innerText =
+level;
+
+}
+
+function saveStory(){
+
+let story =
+document.getElementById("story").value.trim();
+
+if(!story){
+
+alert("Paste a story first.");
+
+return;
+
+}
+
+localStorage.setItem(
+"currentListeningStory",
+story
+);
+
+storiesSaved++;
+
+listeningXP += 15;
+
+localStorage.setItem(
+"storiesSaved",
+storiesSaved
+);
+
+localStorage.setItem(
+"listeningXP",
+listeningXP
+);
+
+updateStats();
+
+alert(
+"Story saved. Copy it into @Voice Aloud Reader and practice listening."
+);
+
+}
+
+updateStats();
+
+</script>
+
+</body>
+</html>
