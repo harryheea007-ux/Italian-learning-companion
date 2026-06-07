@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Patente B Exam Mode</title>
+<title>Patente B Exam V2</title>
 
 <style>
 body{
@@ -52,12 +52,8 @@ border-radius:8px;
 cursor:pointer;
 }
 
-.correct{
-background:green !important;
-}
-
-.wrong{
-background:red !important;
+.option.selected{
+background:#555;
 }
 
 .stat{
@@ -69,6 +65,14 @@ border-radius:10px;
 text-align:center;
 margin-top:10px;
 }
+
+.bad{
+color:#ff4d4d;
+}
+
+.good{
+color:#4dff88;
+}
 </style>
 
 </head>
@@ -77,21 +81,15 @@ margin-top:10px;
 
 <div class="container">
 
-<h1>🚗 Patente B Exam Mode</h1>
+<h1>🚗 Patente B Exam V2</h1>
 
 <div class="card">
 
-<h2>Test</h2>
-
-<button onclick="startTest()">
-Start Exam
-</button>
+<button onclick="startTest()">Start Exam</button>
 
 <div id="quiz"></div>
 
-<button onclick="submitTest()">
-Submit Test
-</button>
+<button onclick="submitTest()">Submit Test</button>
 
 </div>
 
@@ -99,21 +97,15 @@ Submit Test
 
 <h2>Results</h2>
 
-<div class="stat">
-Score<br>
-<span id="score">0</span>
+<div class="stat">Score<br><span id="score">0</span></div>
+<div class="stat">XP<br><span id="xp">0</span></div>
+<div class="stat">Status<br><span id="status">Not Started</span></div>
+
 </div>
 
-<div class="stat">
-XP<br>
-<span id="xp">0</span>
-</div>
-
-<div class="stat">
-Status<br>
-<span id="status">Not Started</span>
-</div>
-
+<div class="card">
+<h2>Review</h2>
+<div id="review"></div>
 </div>
 
 </div>
@@ -121,46 +113,32 @@ Status<br>
 <script>
 
 let questions = [
-{
-q:"What does a red traffic light mean?",
-options:["Go","Stop","Slow down","Turn right"],
-answer:1
-},
-{
-q:"What should you do at a stop sign?",
-options:["Speed up","Stop completely","Honk","Ignore it"],
-answer:1
-},
-{
-q:"Seatbelt is:",
-options:["Optional","Mandatory","Only for driver","Not needed"],
-answer:1
-},
-{
-q:"Alcohol while driving is:",
-options:["Allowed","Limited","Strictly forbidden","Recommended"],
-answer:2
-},
-{
-q:"Priority on road is given to:",
-options:["Right side","Left side","Fast cars","Trucks"],
-answer:0
-}
+{q:"What does a red light mean?", options:["Go","Stop","Wait","Turn"], answer:1, topic:"rules"},
+{q:"Seatbelt is?", options:["Optional","Mandatory","Only driver","Not needed"], answer:1, topic:"safety"},
+{q:"Alcohol limit while driving?", options:["No limit","Strictly forbidden","Depends","Only at night"], answer:1, topic:"alcohol"},
+{q:"At STOP sign you must:", options:["Slow","Stop completely","Honk","Ignore"], answer:1, topic:"rules"},
+{q:"Who has priority?", options:["Left","Right","Fast cars","Trucks"], answer:1, topic:"priority"},
+{q:"What is a roundabout rule?", options:["Exit freely","Give way","Speed up","Stop always"], answer:1, topic:"rules"},
+{q:"Mobile phone while driving?", options:["Allowed","Forbidden","Optional","Only GPS"], answer:1, topic:"safety"},
+{q:"Pedestrians at crossing?", options:["Ignore","Give priority","Honk","Speed"], answer:1, topic:"rules"},
+{q:"Green light means?", options:["Stop","Go","Wait","Turn only"], answer:1, topic:"rules"},
+{q:"Tired driving is:", options:["Safe","Dangerous","Fast","Normal"], answer:1, topic:"safety"}
 ];
 
 let selected = {};
-let score = 0;
-let xp = parseInt(localStorage.getItem("pbExamXP")) || 0;
+let xp = parseInt(localStorage.getItem("pbXPv2")) || 0;
+let wrongAnswers = [];
 
 function startTest(){
 
 let quiz = document.getElementById("quiz");
 quiz.innerHTML = "";
-
 selected = {};
-score = 0;
+wrongAnswers = [];
 
-questions.forEach((q,i)=>{
+let shuffled = questions.sort(()=>Math.random()-0.5);
+
+shuffled.forEach((q,i)=>{
 
 let div = document.createElement("div");
 div.className = "question";
@@ -174,7 +152,8 @@ btn.className = "option";
 btn.innerText = opt;
 
 btn.onclick = () => {
-selected[i] = idx;
+selected[q.q] = idx;
+btn.classList.add("selected");
 };
 
 div.appendChild(btn);
@@ -190,27 +169,47 @@ document.getElementById("status").innerText = "In Progress";
 
 function submitTest(){
 
-score = 0;
+let score = 0;
 
-questions.forEach((q,i)=>{
-if(selected[i] === q.answer){
+questions.forEach(q=>{
+
+if(selected[q.q] === q.answer){
 score++;
+}else{
+wrongAnswers.push(q);
 }
+
 });
 
 let percent = Math.round((score/questions.length)*100);
 
 if(percent >= 60){
-xp += 20;
+xp += 30;
 document.getElementById("status").innerText = "PASS ✅";
 }else{
 document.getElementById("status").innerText = "FAIL ❌";
+xp += 10;
 }
 
-localStorage.setItem("pbExamXP", xp);
+localStorage.setItem("pbXPv2", xp);
 
 document.getElementById("score").innerText = percent + "%";
 document.getElementById("xp").innerText = xp;
+
+// review system
+let review = document.getElementById("review");
+review.innerHTML = "";
+
+wrongAnswers.forEach(q=>{
+let div = document.createElement("div");
+div.className = "bad";
+div.innerHTML = `
+<b>${q.q}</b><br>
+Correct answer: ${q.options[q.answer]}
+`;
+review.appendChild(div);
+});
+
 }
 
 </script>
