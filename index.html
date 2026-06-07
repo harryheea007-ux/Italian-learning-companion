@@ -1,67 +1,235 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Italian Learning Companion V2</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Italian Learning Companion V4</title>
+
 <style>
-body{font-family:Arial,sans-serif;background:#121212;color:#fff;max-width:1100px;margin:auto;padding:20px}
-.card{background:#1e1e1e;padding:16px;border-radius:12px;margin:12px 0}
-input,textarea,select{width:100%;padding:10px;margin:6px 0;background:#2a2a2a;color:#fff;border:1px solid #444}
-button{padding:10px 14px;margin:4px}
-.progress{height:22px;background:#333;border-radius:10px;overflow:hidden}.bar{height:100%;background:#4caf50;width:0%}
-</style></head>
+body{
+    font-family: Arial, sans-serif;
+    background:#111;
+    color:white;
+    margin:0;
+    padding:20px;
+}
+
+.container{
+    max-width:1000px;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+}
+
+.card{
+    background:#1d1d1d;
+    padding:20px;
+    margin:15px 0;
+    border-radius:12px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:12px;
+}
+
+a.button{
+    display:block;
+    text-align:center;
+    padding:14px;
+    background:#2b2b2b;
+    border-radius:10px;
+    text-decoration:none;
+    color:white;
+    font-weight:bold;
+}
+
+a.button:hover{
+    background:#3a3a3a;
+}
+
+input, textarea{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:8px;
+    border:none;
+}
+
+button{
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:green;
+    color:white;
+    font-weight:bold;
+}
+
+.progress{
+    height:18px;
+    background:#333;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:green;
+}
+.small{
+    font-size:14px;
+    opacity:0.8;
+}
+</style>
+</head>
+
 <body>
-<h1>🇮🇹 Italian Learning Companion V2</h1>
-<div class="card"><h2>Dashboard</h2>
-<p id="count">Words Learned: 0</p>
-<p id="coverage">1000 Word Coverage: 0%</p>
-<div class="progress"><div class="bar" id="bar"></div></div></div>
 
-<div class="card"><h2>Vocabulary Tracker</h2>
-<input id="word" placeholder="Add Italian word">
+<div class="container">
+
+<h1>🇮🇹 Italian Learning Companion V4</h1>
+
+<!-- DASHBOARD -->
+<div class="card">
+<h2>📊 Dashboard</h2>
+
+<p>Words Learned: <span id="count">0</span></p>
+<p>XP: <span id="xp">0</span></p>
+
+<div class="progress">
+<div class="progress-bar" id="bar"></div>
+</div>
+
+<p id="percent">Progress: 0%</p>
+</div>
+
+<!-- VOCAB -->
+<div class="card">
+<h2>📚 Vocabulary Tracker</h2>
+
+<input id="wordInput" placeholder="Add Italian word">
 <button onclick="addWord()">Add Word</button>
-<ul id="list"></ul></div>
 
-<div class="card"><h2>Modules</h2>
-<ul>
-<li>Conversation Fluency</li>
-<li>Listening Practice</li>
-<li>Speaking Practice</li>
-<li>Patente B</li>
-<li>Patente C</li>
-<li>CQC</li>
-</ul></div>
+<ul id="wordList"></ul>
+</div>
 
-<div class="card"><h2>ChatGPT Lesson Prompt</h2>
-<textarea id="prompt" rows="12">Create an Italian lesson for a complete beginner.
-Goals:
-- Conversation fluency
-- Listening practice
-- Speaking practice
-- Patente B
-- Patente C
-- CQC
-Include story, dialogue, vocabulary, pronunciation, listening text, speaking drills, and quiz.</textarea>
-<button onclick="copyPrompt()">Copy Prompt</button></div>
+<!-- MODULES -->
+<div class="card">
+<h2>📘 Learning Modules</h2>
+
+<div class="grid">
+
+<a class="button" href="Conversation.html">🗣 Conversation</a>
+<a class="button" href="Listening.html">🎧 Listening</a>
+<a class="button" href="speaking.html">🎤 Speaking</a>
+
+<a class="button" href="vocabulary.html">📚 Vocabulary Page</a>
+<a class="button" href="lessons.html">📖 Lessons</a>
+<a class="button" href="lesson1.html">📘 Lesson 1</a>
+
+</div>
+</div>
+
+<!-- EXAM MODES -->
+<div class="card">
+<h2>🚦 Exam Modes</h2>
+
+<div class="grid">
+
+<a class="button" href="Patente-b.html">🚗 Patente B Exam</a>
+<a class="button" href="patente-c.html">🚚 Patente C Exam</a>
+<a class="button" href="cqc.html">🏢 CQC Exam</a>
+
+</div>
+</div>
+
+<!-- AI LESSON PROMPT SYSTEM -->
+<div class="card">
+<h2>🤖 AI Lesson Generator</h2>
+
+<p class="small">Create structured lesson prompts for practice.</p>
+
+<textarea id="prompt" rows="6" placeholder="Write or generate your Italian lesson request..."></textarea>
+
+<button onclick="savePrompt()">Save Prompt</button>
+<button onclick="clearPrompt()">Clear</button>
+
+<p id="saved" class="small"></p>
+</div>
+
+<!-- MISSION -->
+<div class="card">
+<h2>🎯 Mission</h2>
+<p>
+Reach 1000 Italian words + fluency + pass Patente B → C → CQC
+</p>
+</div>
+
+</div>
 
 <script>
-let words=JSON.parse(localStorage.getItem('words')||'[]');
-function render(){
-document.getElementById('count').innerText='Words Learned: '+words.length;
-let pct=Math.min(100,(words.length/1000)*100);
-document.getElementById('coverage').innerText='1000 Word Coverage: '+pct.toFixed(1)+'%';
-document.getElementById('bar').style.width=pct+'%';
-document.getElementById('list').innerHTML=words.map(w=>'<li>'+w+'</li>').join('');
+
+// LOAD WORDS
+let words = JSON.parse(localStorage.getItem("words")) || [];
+
+function update(){
+    document.getElementById("count").innerText = words.length;
+
+    let xp = words.length * 10;
+    document.getElementById("xp").innerText = xp;
+
+    let percent = (words.length / 1000) * 100;
+
+    document.getElementById("bar").style.width = percent + "%";
+    document.getElementById("percent").innerText = "Progress: " + percent.toFixed(1) + "%";
+
+    let list = document.getElementById("wordList");
+    list.innerHTML = "";
+
+    words.forEach(w=>{
+        let li = document.createElement("li");
+        li.textContent = w;
+        list.appendChild(li);
+    });
 }
+
+// ADD WORD
 function addWord(){
-let w=document.getElementById('word').value.trim();
-if(!w)return;
-words.push(w);
-localStorage.setItem('words',JSON.stringify(words));
-document.getElementById('word').value='';
-render();
+    let input = document.getElementById("wordInput");
+
+    if(input.value.trim() !== ""){
+        words.push(input.value.trim());
+        localStorage.setItem("words", JSON.stringify(words));
+        input.value = "";
+        update();
+    }
 }
-function copyPrompt(){
-navigator.clipboard.writeText(document.getElementById('prompt').value);
-alert('Prompt copied');
+
+// AI PROMPT SAVE
+function savePrompt(){
+    let p = document.getElementById("prompt").value;
+    localStorage.setItem("lessonPrompt", p);
+    document.getElementById("saved").innerText = "Prompt saved locally ✔";
 }
-render();
-</script></body></html>
+
+function clearPrompt(){
+    localStorage.removeItem("lessonPrompt");
+    document.getElementById("prompt").value = "";
+    document.getElementById("saved").innerText = "Cleared ✔";
+}
+
+// LOAD SAVED PROMPT
+document.getElementById("prompt").value =
+localStorage.getItem("lessonPrompt") || "";
+
+update();
+
+</script>
+
+</body>
+</html>
