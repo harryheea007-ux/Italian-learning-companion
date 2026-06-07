@@ -3,67 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Italian Learning Companion V3</title>
+<title>Italian Learning Companion V4</title>
 
 <style>
 body{
-    font-family:Arial,sans-serif;
-    background:#111;
-    color:white;
-    margin:0;
-    padding:20px;
+font-family:Arial,sans-serif;
+background:#111;
+color:white;
+margin:0;
+padding:20px;
 }
 
 .container{
-    max-width:900px;
-    margin:auto;
+max-width:900px;
+margin:auto;
 }
 
 .card{
-    background:#1d1d1d;
-    padding:20px;
-    margin:20px 0;
-    border-radius:15px;
-}
-
-h1,h2{
-    margin-top:0;
-}
-
-button{
-    padding:12px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    margin:5px;
-}
-
-input{
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    border-radius:8px;
-    border:none;
-}
-
-.progress{
-    height:20px;
-    background:#333;
-    border-radius:20px;
-    overflow:hidden;
-}
-
-.progress-bar{
-    height:100%;
-    width:0%;
-    background:green;
+background:#1d1d1d;
+padding:20px;
+margin:20px 0;
+border-radius:15px;
 }
 
 .module{
-    background:#2b2b2b;
-    padding:15px;
-    border-radius:10px;
-    margin:10px 0;
+background:#2b2b2b;
+padding:15px;
+border-radius:10px;
+margin:10px 0;
+}
+
+button{
+padding:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+margin-top:8px;
+width:100%;
+}
+
+.progress{
+height:20px;
+background:#333;
+border-radius:20px;
+overflow:hidden;
+}
+
+.progress-bar{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,green,orange);
+}
+
+.stat{
+margin:8px 0;
 }
 </style>
 </head>
@@ -72,174 +65,130 @@ input{
 
 <div class="container">
 
-<h1>🇮🇹 Italian Learning Companion V3</h1>
+<h1>🇮🇹 Italian Learning Companion V4</h1>
 
 <div class="card">
-<h2>Learning Dashboard</h2>
+<h2>Master Progress</h2>
 
-<p>Current Level: <span id="level">A1</span></p>
-<p>Total XP: <span id="totalXP">0</span></p>
-    <p>Words Learned: <span id="count">0</span></p>
+<div class="stat">Total XP: <span id="xp">0</span></div>
+<div class="stat">Level: <span id="level">A1</span></div>
+<div class="stat">Weak Area: <span id="weak">Analyzing...</span></div>
 
 <div class="progress">
 <div class="progress-bar" id="bar"></div>
 </div>
 
-<p id="coverage">1000 Word Goal Coverage: 0%</p>
 </div>
 
 <div class="card">
-<h2>Vocabulary Tracker</h2>
-
-<input id="wordInput" placeholder="Add Italian word">
-
-<button onclick="addWord()">Add Word</button>
-
-<ul id="wordList"></ul>
+<h2>Daily Mission</h2>
+<p id="mission"></p>
 </div>
 
 <div class="card">
 <h2>Modules</h2>
 
 <div class="module">
-<h3>🗣 Conversation Fluency</h3>
-<p>Practice daily conversations.</p>
-<a href="Conversation.html">
-<button>Open Module</button>
-</a>
+<h3>📚 Vocabulary</h3>
+<a href="vocabulary.html"><button>Open</button></a>
 </div>
 
 <div class="module">
-<h3>🎧 Listening Practice</h3>
-<p>Build listening comprehension.</p>
-<a href="Listening.html">
-<button>Open Module</button>
-</a>
+<h3>🗣 Conversation</h3>
+<a href="Conversation.html"><button>Open</button></a>
 </div>
 
 <div class="module">
-<h3>🎤 Speaking Practice</h3>
-<p>Pronunciation and speaking drills.</p>
-<a href="speaking.html">
-<button>Open Module</button>
-</a>
+<h3>🎧 Listening</h3>
+<a href="Listening.html"><button>Open</button></a>
+</div>
+
+<div class="module">
+<h3>🎤 Speaking</h3>
+<a href="speaking.html"><button>Open</button></a>
 </div>
 
 <div class="module">
 <h3>🚗 Patente B</h3>
-<p>Car licence preparation.</p>
-<a href="Patente-b.html">
-<button>Open Module</button>
-</a>
+<a href="Patente-b.html"><button>Open</button></a>
 </div>
 
 <div class="module">
-<h3>🚚 Patente C</h3>
-<p>Truck licence preparation.</p>
-<a href="Patente-c.html">
-<button>Open Module</button>
-</a>
+<h3>🚛 Patente C</h3>
+<a href="Patente-c.html"><button>Open</button></a>
 </div>
 
 <div class="module">
 <h3>🏢 CQC</h3>
-<p>Professional driver certification.</p>
-<a href="cqc.html">
-<button>Open Module</button>
-</a>
+<a href="cqc.html"><button>Open</button></a>
 </div>
 
-<div class="module">
-<h3>📚 Lessons</h3>
-<p>Structured Italian learning lessons.</p>
-<a href="lessons.html">
-<button>Open Module</button>
-</a>
-</div>
-
-<div class="module">
-<h3>📖 Vocabulary</h3>
-<p>Track your Italian vocabulary growth.</p>
-<a href="vocabulary.html">
-<button>Open Module</button>
-</a>
-</div>
-</div>
-
-<div class="card">
-<h2>Current Mission</h2>
-
-<p>
-Reach 1000 Italian words, conversational fluency,
-and pass Patente B → Patente C → CQC.
-</p>
 </div>
 
 </div>
 
 <script>
-let words = JSON.parse(localStorage.getItem("words")) || [];
 
-function updateUI(){
-    document.getElementById("count").innerText = words.length;
-
-    let percent = (words.length / 1000) * 100;
-
-    document.getElementById("bar").style.width = percent + "%";
-
-    document.getElementById("coverage").innerText =
-    "1000 Word Goal Coverage: " + percent.toFixed(1) + "%";
-
-    let list = document.getElementById("wordList");
-    list.innerHTML = "";
-
-    words.forEach(word=>{
-        let li=document.createElement("li");
-        li.textContent=word;
-        list.appendChild(li);
-    });
+// ===== TOTAL XP FROM ALL MODULES =====
+function get(key){
+return parseInt(localStorage.getItem(key)) || 0;
 }
 
-function addWord(){
-    let input=document.getElementById("wordInput");
+let totalXP =
+get("vocabXP") +
+get("conv2xp") +
+get("listXP") +
+get("spXP") +
+get("pbXP") +
+get("pcXP") +
+get("cqcXP");
 
-    if(input.value.trim()!=""){
-        words.push(input.value.trim());
-
-        localStorage.setItem(
-            "words",
-            JSON.stringify(words)
-        );
-
-        input.value="";
-        updateUI();let totalXP =
-(parseInt(localStorage.getItem("conversationXP")) || 0)
-+
-(parseInt(localStorage.getItem("listeningXP")) || 0)
-+
-(parseInt(localStorage.getItem("speakingXP")) || 0)
-+
-(parseInt(localStorage.getItem("pbXP")) || 0)
-+
-(parseInt(localStorage.getItem("pcXP")) || 0)
-+
-(parseInt(localStorage.getItem("cqcXP")) || 0);
-
-document.getElementById("totalXP").innerText =
-totalXP;
-
+// ===== LEVEL SYSTEM =====
 let level = "A1";
-
 if(totalXP > 500) level = "A2";
 if(totalXP > 1500) level = "B1";
 if(totalXP > 3000) level = "B2";
 
-document.getElementById("level").innerText =
-level;
-    }
+// ===== WEAK AREA DETECTION =====
+let weak = "Balanced";
+
+let scores = {
+Vocabulary: get("vocabXP"),
+Conversation: get("conv2xp"),
+Listening: get("listXP"),
+Speaking: get("spXP"),
+Driving: get("pbXP") + get("pcXP") + get("cqcXP")
+};
+
+let min = Math.min(...Object.values(scores));
+for(let k in scores){
+if(scores[k] === min){
+weak = k;
+break;
+}
 }
 
-updateUI();
+// ===== DAILY MISSION =====
+let missions = [
+"📚 Learn 10 new vocabulary words",
+"🗣 Complete 1 conversation session",
+"🎧 Listen to 1 Italian story",
+"🎤 Practice speaking for 5 minutes",
+"🚗 Complete 10 Patente questions"
+];
+
+let mission = missions[Math.floor(Math.random()*missions.length)];
+
+// ===== UI UPDATE =====
+document.getElementById("xp").innerText = totalXP;
+document.getElementById("level").innerText = level;
+document.getElementById("weak").innerText = weak;
+document.getElementById("mission").innerText = mission;
+
+// progress bar
+let progress = Math.min(100, (totalXP / 3000) * 100);
+document.getElementById("bar").style.width = progress + "%";
+
 </script>
 
 </body>
