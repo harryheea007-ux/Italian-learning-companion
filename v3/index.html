@@ -77,7 +77,9 @@ input{
 <div class="card">
 <h2>Learning Dashboard</h2>
 
-<p>Words Learned: <span id="count">0</span></p>
+<p>Current Level: <span id="level">A1</span></p>
+<p>Total XP: <span id="totalXP">0</span></p>
+    <p>Words Learned: <span id="count">0</span></p>
 
 <div class="progress">
 <div class="progress-bar" id="bar"></div>
@@ -102,31 +104,65 @@ input{
 <div class="module">
 <h3>🗣 Conversation Fluency</h3>
 <p>Practice daily conversations.</p>
+<a href="Conversation.html">
+<button>Open Module</button>
+</a>
 </div>
 
 <div class="module">
 <h3>🎧 Listening Practice</h3>
 <p>Build listening comprehension.</p>
+<a href="Listening.html">
+<button>Open Module</button>
+</a>
 </div>
 
 <div class="module">
 <h3>🎤 Speaking Practice</h3>
 <p>Pronunciation and speaking drills.</p>
+<a href="speaking.html">
+<button>Open Module</button>
+</a>
 </div>
 
 <div class="module">
 <h3>🚗 Patente B</h3>
 <p>Car licence preparation.</p>
+<a href="Patente-b.html">
+<button>Open Module</button>
+</a>
 </div>
 
 <div class="module">
 <h3>🚚 Patente C</h3>
 <p>Truck licence preparation.</p>
+<a href="Patente-c.html">
+<button>Open Module</button>
+</a>
 </div>
 
 <div class="module">
 <h3>🏢 CQC</h3>
 <p>Professional driver certification.</p>
+<a href="cqc.html">
+<button>Open Module</button>
+</a>
+</div>
+
+<div class="module">
+<h3>📚 Lessons</h3>
+<p>Structured Italian learning lessons.</p>
+<a href="lessons.html">
+<button>Open Module</button>
+</a>
+</div>
+
+<div class="module">
+<h3>📖 Vocabulary</h3>
+<p>Track your Italian vocabulary growth.</p>
+<a href="vocabulary.html">
+<button>Open Module</button>
+</a>
 </div>
 </div>
 
@@ -176,7 +212,30 @@ function addWord(){
         );
 
         input.value="";
-        updateUI();
+        updateUI();let totalXP =
+(parseInt(localStorage.getItem("conversationXP")) || 0)
++
+(parseInt(localStorage.getItem("listeningXP")) || 0)
++
+(parseInt(localStorage.getItem("speakingXP")) || 0)
++
+(parseInt(localStorage.getItem("pbXP")) || 0)
++
+(parseInt(localStorage.getItem("pcXP")) || 0)
++
+(parseInt(localStorage.getItem("cqcXP")) || 0);
+
+document.getElementById("totalXP").innerText =
+totalXP;
+
+let level = "A1";
+
+if(totalXP > 500) level = "A2";
+if(totalXP > 1500) level = "B1";
+if(totalXP > 3000) level = "B2";
+
+document.getElementById("level").innerText =
+level;
     }
 }
 
