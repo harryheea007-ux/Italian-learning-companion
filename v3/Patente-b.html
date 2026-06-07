@@ -2,209 +2,216 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Patente B Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patente B Exam Mode</title>
 
 <style>
-
 body{
 background:#111;
 color:white;
-font-family:Arial,sans-serif;
+font-family:Arial;
 padding:20px;
 }
 
-h1{
-text-align:center;
+.container{
+max-width:900px;
+margin:auto;
 }
 
 .card{
-background:#222;
-padding:15px;
-border-radius:10px;
+background:#1d1d1d;
+padding:20px;
+border-radius:15px;
 margin-bottom:15px;
-}
-
-input{
-width:100%;
-padding:12px;
-margin-top:10px;
-background:#333;
-color:white;
-border:none;
-border-radius:8px;
 }
 
 button{
 width:100%;
 padding:12px;
 margin-top:10px;
-background:#0a84ff;
-color:white;
 border:none;
 border-radius:8px;
+background:#0a84ff;
+color:white;
+cursor:pointer;
+}
+
+.question{
+background:#222;
+padding:15px;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.option{
+display:block;
+margin:8px 0;
+padding:10px;
+background:#333;
+border-radius:8px;
+cursor:pointer;
+}
+
+.correct{
+background:green !important;
+}
+
+.wrong{
+background:red !important;
 }
 
 .stat{
-font-size:20px;
+display:inline-block;
+width:48%;
+background:#222;
+padding:10px;
+border-radius:10px;
+text-align:center;
 margin-top:10px;
 }
-
 </style>
 
 </head>
 
 <body>
 
-<h1>🚗 Patente B Tracker</h1>
+<div class="container">
+
+<h1>🚗 Patente B Exam Mode</h1>
 
 <div class="card">
 
-<h3>Study Session</h3>
+<h2>Test</h2>
 
-<input
-id="questions"
-type="number"
-placeholder="Questions studied today">
+<button onclick="startTest()">
+Start Exam
+</button>
 
-<input
-id="correct"
-type="number"
-placeholder="Correct answers">
+<div id="quiz"></div>
 
-<button onclick="recordSession()">
-Save Session
+<button onclick="submitTest()">
+Submit Test
 </button>
 
 </div>
 
 <div class="card">
 
-<h3>Progress</h3>
+<h2>Results</h2>
 
 <div class="stat">
-Questions:
-<span id="totalQuestions">0</span>
+Score<br>
+<span id="score">0</span>
 </div>
 
 <div class="stat">
-Correct:
-<span id="totalCorrect">0</span>
-</div>
-
-<div class="stat">
-Wrong:
-<span id="totalWrong">0</span>
-</div>
-
-<div class="stat">
-XP:
+XP<br>
 <span id="xp">0</span>
 </div>
 
 <div class="stat">
-Readiness:
-<span id="readiness">0%</span>
+Status<br>
+<span id="status">Not Started</span>
+</div>
+
 </div>
 
 </div>
 
 <script>
 
-let totalQuestions =
-parseInt(localStorage.getItem("pbQuestions")) || 0;
+let questions = [
+{
+q:"What does a red traffic light mean?",
+options:["Go","Stop","Slow down","Turn right"],
+answer:1
+},
+{
+q:"What should you do at a stop sign?",
+options:["Speed up","Stop completely","Honk","Ignore it"],
+answer:1
+},
+{
+q:"Seatbelt is:",
+options:["Optional","Mandatory","Only for driver","Not needed"],
+answer:1
+},
+{
+q:"Alcohol while driving is:",
+options:["Allowed","Limited","Strictly forbidden","Recommended"],
+answer:2
+},
+{
+q:"Priority on road is given to:",
+options:["Right side","Left side","Fast cars","Trucks"],
+answer:0
+}
+];
 
-let totalCorrect =
-parseInt(localStorage.getItem("pbCorrect")) || 0;
+let selected = {};
+let score = 0;
+let xp = parseInt(localStorage.getItem("pbExamXP")) || 0;
 
-let xp =
-parseInt(localStorage.getItem("pbXP")) || 0;
+function startTest(){
 
-function update(){
+let quiz = document.getElementById("quiz");
+quiz.innerHTML = "";
 
-let wrong =
-totalQuestions - totalCorrect;
+selected = {};
+score = 0;
 
-document.getElementById("totalQuestions").innerText =
-totalQuestions;
+questions.forEach((q,i)=>{
 
-document.getElementById("totalCorrect").innerText =
-totalCorrect;
+let div = document.createElement("div");
+div.className = "question";
 
-document.getElementById("totalWrong").innerText =
-wrong;
+div.innerHTML = `<p>${q.q}</p>`;
 
-document.getElementById("xp").innerText =
-xp;
+q.options.forEach((opt,idx)=>{
 
-let readiness = 0;
+let btn = document.createElement("div");
+btn.className = "option";
+btn.innerText = opt;
 
-if(totalQuestions > 0){
+btn.onclick = () => {
+selected[i] = idx;
+};
 
-readiness =
-Math.round(
-(totalCorrect / totalQuestions) * 100
-);
+div.appendChild(btn);
 
+});
+
+quiz.appendChild(div);
+
+});
+
+document.getElementById("status").innerText = "In Progress";
 }
 
-document.getElementById("readiness").innerText =
-readiness + "%";
+function submitTest(){
 
+score = 0;
+
+questions.forEach((q,i)=>{
+if(selected[i] === q.answer){
+score++;
+}
+});
+
+let percent = Math.round((score/questions.length)*100);
+
+if(percent >= 60){
+xp += 20;
+document.getElementById("status").innerText = "PASS ✅";
+}else{
+document.getElementById("status").innerText = "FAIL ❌";
 }
 
-function recordSession(){
+localStorage.setItem("pbExamXP", xp);
 
-let questions =
-parseInt(
-document.getElementById("questions").value
-);
-
-let correct =
-parseInt(
-document.getElementById("correct").value
-);
-
-if(
-!questions ||
-questions <= 0 ||
-correct < 0
-){
-alert("Enter valid values.");
-return;
+document.getElementById("score").innerText = percent + "%";
+document.getElementById("xp").innerText = xp;
 }
-
-totalQuestions += questions;
-totalCorrect += correct;
-
-xp += questions;
-
-localStorage.setItem(
-"pbQuestions",
-totalQuestions
-);
-
-localStorage.setItem(
-"pbCorrect",
-totalCorrect
-);
-
-localStorage.setItem(
-"pbXP",
-xp
-);
-
-update();
-
-document.getElementById("questions").value="";
-document.getElementById("correct").value="";
-
-alert("Session saved!");
-
-}
-
-update();
 
 </script>
 
