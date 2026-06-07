@@ -3,65 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Conversation Fluency Trainer</title>
+<title>Conversation V2</title>
 
 <style>
-
 body{
 background:#111;
 color:white;
-font-family:Arial,sans-serif;
+font-family:Arial;
 padding:20px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
 }
 
 .card{
-background:#222;
+background:#1d1d1d;
 padding:20px;
 border-radius:15px;
-margin-bottom:20px;
+margin-bottom:15px;
 }
 
-select,input{
+select,input,textarea{
 width:100%;
 padding:12px;
 margin-top:10px;
+border-radius:8px;
+border:none;
 background:#333;
 color:white;
-border:none;
-border-radius:8px;
 }
 
 button{
+width:100%;
 padding:12px;
 margin-top:10px;
-background:#0a84ff;
-color:white;
 border:none;
 border-radius:8px;
-width:100%;
+background:#0a84ff;
+color:white;
+cursor:pointer;
 }
 
 .chat{
-background:#1b1b1b;
+background:#222;
 padding:15px;
 border-radius:10px;
-margin-top:15px;
+min-height:200px;
 max-height:400px;
-overflow-y:auto;
+overflow:auto;
 }
 
 .user{
-background:#0a84ff;
-padding:10px;
-border-radius:10px;
-margin-top:10px;
+color:#4da3ff;
+margin:10px 0;
 }
 
 .ai{
-background:#333;
-padding:10px;
-border-radius:10px;
-margin-top:10px;
+color:#7CFC00;
+margin:10px 0;
+}
+
+.bad{
+color:#ff4d4d;
 }
 
 .stats{
@@ -71,38 +76,39 @@ gap:10px;
 }
 
 .stat{
-background:#333;
-padding:15px;
+background:#222;
+padding:10px;
 border-radius:10px;
 text-align:center;
 }
-
 </style>
 
 </head>
 
 <body>
 
-<h1>🗣 Conversation Fluency Trainer</h1>
+<div class="container">
+
+<h1>🧠 Conversation V2</h1>
 
 <div class="card">
 
 <h2>Scenario</h2>
 
 <select id="scenario">
-
 <option>Restaurant</option>
-
 <option>Shopping</option>
-
 <option>Job Interview</option>
-
 <option>Truck Driver</option>
-
-<option>Daily Life</option>
-
 <option>Government Office</option>
+<option>Daily Life</option>
+</select>
 
+<select id="level">
+<option value="A1">A1 Beginner</option>
+<option value="A2">A2 Basic</option>
+<option value="B1">B1 Intermediate</option>
+<option value="B2">B2 Advanced</option>
 </select>
 
 </div>
@@ -114,27 +120,23 @@ text-align:center;
 <div class="stats">
 
 <div class="stat">
-XP
-<br>
+XP<br>
 <span id="xp">0</span>
 </div>
 
 <div class="stat">
-Level
-<br>
-<span id="level">A1</span>
-</div>
-
-<div class="stat">
-Conversations
-<br>
-<span id="conversations">0</span>
-</div>
-
-<div class="stat">
-Fluency
-<br>
+Fluency<br>
 <span id="fluency">0%</span>
+</div>
+
+<div class="stat">
+Words Used<br>
+<span id="words">0</span>
+</div>
+
+<div class="stat">
+Level<br>
+<span id="lvl">A1</span>
 </div>
 
 </div>
@@ -143,206 +145,149 @@ Fluency
 
 <div class="card">
 
-<h2>Conversation</h2>
+<h2>Chat</h2>
 
 <div id="chat" class="chat"></div>
 
-<input
-id="message"
-placeholder="Type in Italian..."
->
+<textarea id="input" placeholder="Type in Italian..."></textarea>
 
-<button onclick="sendMessage()">
-Send
-</button>
+<button onclick="send()">Send</button>
 
-</div><script>
+</div>
 
-let xp =
-parseInt(localStorage.getItem("conversationXP")) || 0;
+</div>
 
-let conversations =
-parseInt(localStorage.getItem("conversationCount")) || 0;
+<script>
 
-let fluency =
-parseInt(localStorage.getItem("conversationFluency")) || 0;
+let xp = parseInt(localStorage.getItem("conv2xp")) || 0;
+let wordsUsed = parseInt(localStorage.getItem("conv2words")) || 0;
 
-function updateStats(){
+let vocab = JSON.parse(localStorage.getItem("vocabV2")) || [];
 
-document.getElementById("xp").innerText = xp;
-
-document.getElementById("conversations").innerText =
-conversations;
-
-document.getElementById("fluency").innerText =
-fluency + "%";
-
-let level = "A1";
-
-if(xp > 200) level = "A2";
-if(xp > 500) level = "B1";
-if(xp > 1000) level = "B2";
-
-document.getElementById("level").innerText =
-level;
-
+function getLevel(){
+if(xp < 200) return "A1";
+if(xp < 600) return "A2";
+if(xp < 1200) return "B1";
+return "B2";
 }
 
-const responses = {
+function detectMistakes(text){
 
-"Restaurant":[
-"Ciao! Vuoi vedere il menu?",
-"Cosa desideri ordinare?",
-"Preferisci acqua o vino?"
+text = text.toLowerCase();
+
+if(text.includes("io andare")){
+return "❌ Correction: Io vado";
+}
+
+if(text.includes("io essere")){
+return "❌ Correction: Sono";
+}
+
+if(text.includes("io have")){
+return "❌ Correction: Ho";
+}
+
+return null;
+}
+
+function countVocabUsage(text){
+
+let count = 0;
+
+vocab.forEach(v=>{
+if(text.toLowerCase().includes(v.it)){
+count++;
+}
+});
+
+return count;
+}
+
+function aiReply(level){
+
+let responses = {
+
+A1:[
+"Ciao! Come stai?",
+"Dove abiti?",
+"Come ti chiami?"
 ],
 
-"Shopping":[
-"Buongiorno, come posso aiutarti?",
-"Che cosa stai cercando?",
-"Hai bisogno di una taglia diversa?"
+A2:[
+"Cosa hai fatto oggi?",
+"Che lavoro fai?",
+"Ti piace l'Italia?"
 ],
 
-"Job Interview":[
-"Parlami di te.",
-"Perché vuoi questo lavoro?",
-"Hai esperienza lavorativa?"
+B1:[
+"Raccontami della tua esperienza lavorativa.",
+"Hai mai guidato un camion?",
+"Come vai al lavoro ogni giorno?"
 ],
 
-"Truck Driver":[
-"Hai una patente C?",
-"Hai il certificato CQC?",
-"Quanti anni di esperienza hai?"
-],
-
-"Daily Life":[
-"Come stai oggi?",
-"Cosa hai fatto ieri?",
-"Cosa farai domani?"
-],
-
-"Government Office":[
-"Posso vedere i documenti?",
-"Hai un appuntamento?",
-"Qual è il motivo della visita?"
+B2:[
+"Descrivi una situazione difficile che hai affrontato.",
+"Come gestisci lo stress nel lavoro?",
+"Qual è la tua opinione sulla sicurezza stradale?"
 ]
 
 };
 
-function scoreMessage(text){
+let list = responses[level];
 
-let score = 0;
-
-let words = text.trim().split(" ");
-
-score += words.length * 5;
-
-if(text.length > 20)
-score += 10;
-
-if(text.includes("sono"))
-score += 10;
-
-if(text.includes("ho"))
-score += 10;
-
-if(text.includes("vorrei"))
-score += 15;
-
-return Math.min(score,100);
-
+return list[Math.floor(Math.random()*list.length)];
 }
 
-function correction(text){
+function send(){
 
-if(text.toLowerCase() === "io andare lavoro"){
-return "Correzione: Io vado al lavoro.";
-}
-
-if(text.toLowerCase() === "io avere fame"){
-return "Correzione: Ho fame.";
-}
-
-return null;
-
-}
-
-function sendMessage(){
-
-let input =
-document.getElementById("message");
-
-let text =
-input.value.trim();
+let input = document.getElementById("input");
+let text = input.value.trim();
 
 if(!text) return;
 
-let chat =
-document.getElementById("chat");
+let chat = document.getElementById("chat");
 
-chat.innerHTML +=
-'<div class="user">'+text+'</div>';
+chat.innerHTML += `<div class="user">👤 ${text}</div>`;
 
-let fix =
-correction(text);
+let fix = detectMistakes(text);
 
 if(fix){
-
-chat.innerHTML +=
-'<div class="ai">'+fix+'</div>';
-
+chat.innerHTML += `<div class="bad">${fix}</div>`;
 }
 
-let scenario =
-document.getElementById("scenario").value;
+let lvl = getLevel();
+let reply = aiReply(lvl);
 
-let options =
-responses[scenario];
+chat.innerHTML += `<div class="ai">🤖 ${reply}</div>`;
 
-let aiReply =
-options[
-Math.floor(
-Math.random() * options.length
-)
-];
+// scoring
+xp += text.length;
+wordsUsed += countVocabUsage(text);
 
-chat.innerHTML +=
-'<div class="ai">'+aiReply+'</div>';
-
-fluency =
-Math.round(
-(fluency + scoreMessage(text))
-/ 2
+let fluency = Math.min(100,
+Math.round((wordsUsed * 5) + (xp / 10))
 );
 
-xp += 10;
+localStorage.setItem("conv2xp", xp);
+localStorage.setItem("conv2words", wordsUsed);
 
-conversations++;
-
-localStorage.setItem(
-"conversationXP",
-xp
-);
-
-localStorage.setItem(
-"conversationCount",
-conversations
-);
-
-localStorage.setItem(
-"conversationFluency",
-fluency
-);
-
-updateStats();
+document.getElementById("xp").innerText = xp;
+document.getElementById("words").innerText = wordsUsed;
+document.getElementById("fluency").innerText = fluency + "%";
+document.getElementById("lvl").innerText = lvl;
 
 input.value = "";
 
-chat.scrollTop =
-chat.scrollHeight;
-
+chat.scrollTop = chat.scrollHeight;
 }
 
-updateStats();
+function init(){
+document.getElementById("xp").innerText = xp;
+document.getElementById("words").innerText = wordsUsed;
+document.getElementById("lvl").innerText = getLevel();
+}
+
+init();
 
 </script>
 
