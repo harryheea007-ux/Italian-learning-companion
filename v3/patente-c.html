@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Patente C Tracker</title>
+
+<style>
+
+body{
+background:#111;
+color:white;
+font-family:Arial,sans-serif;
+padding:20px;
+}
+
+h1{
+text-align:center;
+}
+
+.card{
+background:#222;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+background:#333;
+color:white;
+border:none;
+border-radius:8px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+background:#ff8800;
+color:white;
+border:none;
+border-radius:8px;
+}
+
+.stat{
+font-size:20px;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🚛 Patente C Tracker</h1>
+
+<div class="card">
+
+<h3>Study Session</h3>
+
+<input
+id="hours"
+type="number"
+placeholder="Hours studied">
+
+<input
+id="topics"
+type="number"
+placeholder="Topics completed">
+
+<button onclick="saveStudy()">
+Save Study Session
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>Progress</h3>
+
+<div class="stat">
+Hours Studied:
+<span id="studyHours">0</span>
+</div>
+
+<div class="stat">
+Topics Completed:
+<span id="completedTopics">0</span>
+</div>
+
+<div class="stat">
+XP:
+<span id="xp">0</span>
+</div>
+
+<div class="stat">
+Readiness:
+<span id="readiness">0%</span>
+</div>
+
+</div>
+
+<script>
+
+let studyHours =
+parseInt(localStorage.getItem("pcHours")) || 0;
+
+let completedTopics =
+parseInt(localStorage.getItem("pcTopics")) || 0;
+
+let xp =
+parseInt(localStorage.getItem("pcXP")) || 0;
+
+function update(){
+
+document.getElementById("studyHours").innerText =
+studyHours;
+
+document.getElementById("completedTopics").innerText =
+completedTopics;
+
+document.getElementById("xp").innerText =
+xp;
+
+let readiness =
+Math.min(
+100,
+Math.round(
+(completedTopics * 5) +
+(studyHours * 2)
+)
+);
+
+document.getElementById("readiness").innerText =
+readiness + "%";
+
+}
+
+function saveStudy(){
+
+let hours =
+parseInt(
+document.getElementById("hours").value
+);
+
+let topics =
+parseInt(
+document.getElementById("topics").value
+);
+
+if(
+!hours ||
+hours < 0 ||
+!topics ||
+topics < 0
+){
+alert("Enter valid values.");
+return;
+}
+
+studyHours += hours;
+completedTopics += topics;
+
+xp += (hours * 10) + (topics * 5);
+
+localStorage.setItem(
+"pcHours",
+studyHours
+);
+
+localStorage.setItem(
+"pcTopics",
+completedTopics
+);
+
+localStorage.setItem(
+"pcXP",
+xp
+);
+
+update();
+
+document.getElementById("hours").value="";
+document.getElementById("topics").value="";
+
+alert("Study session saved!");
+
+}
+
+update();
+
+</script>
+
+</body>
+</html>
