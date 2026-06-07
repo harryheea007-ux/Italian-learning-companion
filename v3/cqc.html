@@ -2,196 +2,218 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>CQC Professional Driver Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CQC Exam V1</title>
 
 <style>
-
 body{
 background:#111;
 color:white;
-font-family:Arial,sans-serif;
+font-family:Arial;
 padding:20px;
 }
 
-h1{
-text-align:center;
+.container{
+max-width:900px;
+margin:auto;
 }
 
 .card{
-background:#222;
-padding:15px;
-border-radius:10px;
+background:#1d1d1d;
+padding:20px;
+border-radius:15px;
 margin-bottom:15px;
-}
-
-input{
-width:100%;
-padding:12px;
-margin-top:10px;
-background:#333;
-color:white;
-border:none;
-border-radius:8px;
 }
 
 button{
 width:100%;
 padding:12px;
 margin-top:10px;
-background:#9c27b0;
-color:white;
 border:none;
 border-radius:8px;
+background:#6f42c1;
+color:white;
+cursor:pointer;
+}
+
+.question{
+background:#222;
+padding:15px;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.option{
+display:block;
+margin:8px 0;
+padding:10px;
+background:#333;
+border-radius:8px;
+cursor:pointer;
+}
+
+.option.selected{
+background:#555;
 }
 
 .stat{
-font-size:20px;
+display:inline-block;
+width:48%;
+background:#222;
+padding:10px;
+border-radius:10px;
+text-align:center;
 margin-top:10px;
 }
 
+.bad{
+color:#ff4d4d;
+}
+
+.good{
+color:#4dff88;
+}
 </style>
+
 </head>
 
 <body>
 
-<h1>🏢 CQC Professional Driver</h1>
+<div class="container">
+
+<h1>🏢 CQC Exam V1</h1>
 
 <div class="card">
 
-<h3>Study Session</h3>
+<button onclick="startTest()">Start CQC Exam</button>
 
-<input
-id="hours"
-type="number"
-placeholder="Hours studied">
+<div id="quiz"></div>
 
-<input
-id="topics"
-type="number"
-placeholder="Professional topics completed">
-
-<button onclick="saveSession()">
-Save Session
-</button>
+<button onclick="submitTest()">Submit Exam</button>
 
 </div>
 
 <div class="card">
 
-<h3>Progress</h3>
+<h2>Results</h2>
 
-<div class="stat">
-Hours:
-<span id="hoursTotal">0</span>
+<div class="stat">Score<br><span id="score">0</span></div>
+<div class="stat">XP<br><span id="xp">0</span></div>
+<div class="stat">Status<br><span id="status">Not Started</span></div>
+
 </div>
 
-<div class="stat">
-Topics:
-<span id="topicsTotal">0</span>
-</div>
+<div class="card">
 
-<div class="stat">
-XP:
-<span id="xp">0</span>
-</div>
+<h2>Review Mistakes</h2>
 
-<div class="stat">
-Employment Readiness:
-<span id="readiness">0%</span>
+<div id="review"></div>
+
 </div>
 
 </div>
 
 <script>
 
-let hours =
-parseInt(localStorage.getItem("cqcHours")) || 0;
+let questions = [
+{q:"Maximum daily driving time is regulated by:", options:["Tachograph rules","Fuel level","Vehicle color","Road type"], answer:0},
+{q:"Mandatory rest period ensures:", options:["More speed","Driver safety","Faster delivery","Lower fuel"], answer:1},
+{q:"Tachograph records:", options:["Music","Driving time","Fuel use","GPS only"], answer:1},
+{q:"Professional driver must:", options:["Ignore rules","Follow EU regulations","Drive nonstop","Avoid breaks"], answer:1},
+{q:"Weekly rest is:", options:["Optional","Mandatory","Not needed","Random"], answer:1},
+{q:"Overworking causes:", options:["Better focus","Fatigue risk","Faster driving","Less fuel use"], answer:1},
+{q:"CQC is required for:", options:["Private cars","Professional drivers","Cyclists","Motorcycles"], answer:1},
+{q:"Driver responsibility includes:", options:["Cargo safety","Radio use","Fuel choice","Car washing"], answer:0},
+{q:"Main goal of CQC rules:", options:["Speed delivery","Safety & compliance","Less traffic","More driving hours"], answer:1},
+{q:"Rest rules are designed to prevent:", options:["Fatigue accidents","Traffic lights","Fuel cost","Weather issues"], answer:0}
+];
 
-let topics =
-parseInt(localStorage.getItem("cqcTopics")) || 0;
+let selected = {};
+let xp = parseInt(localStorage.getItem("cqcXPv1")) || 0;
+let wrong = [];
 
-let xp =
-parseInt(localStorage.getItem("cqcXP")) || 0;
+function startTest(){
 
-function update(){
+let quiz = document.getElementById("quiz");
+quiz.innerHTML = "";
+selected = {};
+wrong = [];
 
-document.getElementById("hoursTotal").innerText =
-hours;
+let shuffled = questions.sort(()=>Math.random()-0.5);
 
-document.getElementById("topicsTotal").innerText =
-topics;
+shuffled.forEach(q=>{
 
-document.getElementById("xp").innerText =
-xp;
+let div = document.createElement("div");
+div.className = "question";
 
-let readiness =
-Math.min(
-100,
-Math.round(
-(hours * 2) +
-(topics * 4)
-)
-);
+div.innerHTML = `<p>${q.q}</p>`;
 
-document.getElementById("readiness").innerText =
-readiness + "%";
+q.options.forEach((opt,idx)=>{
 
+let btn = document.createElement("div");
+btn.className = "option";
+btn.innerText = opt;
+
+btn.onclick = () => {
+selected[q.q] = idx;
+btn.classList.add("selected");
+};
+
+div.appendChild(btn);
+
+});
+
+quiz.appendChild(div);
+
+});
+
+document.getElementById("status").innerText = "In Progress";
 }
 
-function saveSession(){
+function submitTest(){
 
-let newHours =
-parseInt(
-document.getElementById("hours").value
-);
+let score = 0;
 
-let newTopics =
-parseInt(
-document.getElementById("topics").value
-);
+questions.forEach(q=>{
 
-if(
-!newHours ||
-newHours < 0 ||
-!newTopics ||
-newTopics < 0
-){
-alert("Enter valid values.");
-return;
+if(selected[q.q] === q.answer){
+score++;
+}else{
+wrong.push(q);
 }
 
-hours += newHours;
-topics += newTopics;
+});
 
-xp += (newHours * 10) + (newTopics * 8);
+let percent = Math.round((score/questions.length)*100);
 
-localStorage.setItem(
-"cqcHours",
-hours
-);
-
-localStorage.setItem(
-"cqcTopics",
-topics
-);
-
-localStorage.setItem(
-"cqcXP",
-xp
-);
-
-update();
-
-document.getElementById("hours").value="";
-document.getElementById("topics").value="";
-
-alert("Session saved!");
-
+if(percent >= 60){
+xp += 50;
+document.getElementById("status").innerText = "PASS ✅";
+}else{
+xp += 20;
+document.getElementById("status").innerText = "FAIL ❌";
 }
 
-update();
+localStorage.setItem("cqcXPv1", xp);
+
+document.getElementById("score").innerText = percent + "%";
+document.getElementById("xp").innerText = xp;
+
+// review
+let review = document.getElementById("review");
+review.innerHTML = "";
+
+wrong.forEach(q=>{
+let div = document.createElement("div");
+div.className = "bad";
+div.innerHTML = `
+<b>${q.q}</b><br>
+Correct: ${q.options[q.answer]}
+`;
+review.appendChild(div);
+});
+
+}
 
 </script>
 
