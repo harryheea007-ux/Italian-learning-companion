@@ -1,1 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Italian Speaking Trainer</title>
 
+<style>
+body{
+background:#111;
+color:white;
+font-family:Arial,sans-serif;
+padding:20px;
+}
+
+h1{
+text-align:center;
+}
+
+.card{
+background:#222;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+background:#333;
+color:white;
+border:none;
+border-radius:8px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+background:#28a745;
+color:white;
+border:none;
+border-radius:8px;
+font-size:16px;
+}
+
+.stat{
+font-size:20px;
+margin:10px 0;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎤 Italian Speaking Trainer</h1>
+
+<div class="card">
+
+<h3>Speaking Practice Log</h3>
+
+<p>
+Speak Italian for 5–15 minutes, then record your session below.
+</p>
+
+<input
+id="minutes"
+type="number"
+placeholder="Minutes practiced">
+
+<button onclick="finishSession()">
+Complete Speaking Session
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>Your Progress</h3>
+
+<div class="stat">
+Sessions:
+<span id="sessions">0</span>
+</div>
+
+<div class="stat">
+Speaking XP:
+<span id="xp">0</span>
+</div>
+
+<div class="stat">
+Confidence:
+<span id="confidence">0%</span>
+</div>
+
+<div class="stat">
+Level:
+<span id="level">A1</span>
+</div>
+
+</div>
+
+<script>
+
+let sessions =
+parseInt(localStorage.getItem("speakingSessions")) || 0;
+
+let xp =
+parseInt(localStorage.getItem("speakingXP")) || 0;
+
+let confidence =
+parseInt(localStorage.getItem("speakingConfidence")) || 0;
+
+function updateStats(){
+
+document.getElementById("sessions").innerText =
+sessions;
+
+document.getElementById("xp").innerText =
+xp;
+
+document.getElementById("confidence").innerText =
+confidence + "%";
+
+let level = "A1";
+
+if(xp > 200) level = "A2";
+if(xp > 500) level = "B1";
+if(xp > 1000) level = "B2";
+
+document.getElementById("level").innerText =
+level;
+
+}
+
+function finishSession(){
+
+let minutes =
+parseInt(document.getElementById("minutes").value);
+
+if(!minutes || minutes <= 0){
+alert("Enter speaking minutes.");
+return;
+}
+
+sessions++;
+
+xp += minutes * 2;
+
+confidence =
+Math.min(100, confidence + 3);
+
+localStorage.setItem(
+"speakingSessions",
+sessions
+);
+
+localStorage.setItem(
+"speakingXP",
+xp
+);
+
+localStorage.setItem(
+"speakingConfidence",
+confidence
+);
+
+updateStats();
+
+document.getElementById("minutes").value = "";
+
+alert("Speaking session recorded!");
+
+}
+
+updateStats();
+
+</script>
+
+</body>
+</html>
