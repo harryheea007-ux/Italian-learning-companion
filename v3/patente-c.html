@@ -2,197 +2,218 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Patente C Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patente C Exam V1</title>
 
 <style>
-
 body{
 background:#111;
 color:white;
-font-family:Arial,sans-serif;
+font-family:Arial;
 padding:20px;
 }
 
-h1{
-text-align:center;
+.container{
+max-width:900px;
+margin:auto;
 }
 
 .card{
-background:#222;
-padding:15px;
-border-radius:10px;
+background:#1d1d1d;
+padding:20px;
+border-radius:15px;
 margin-bottom:15px;
-}
-
-input{
-width:100%;
-padding:12px;
-margin-top:10px;
-background:#333;
-color:white;
-border:none;
-border-radius:8px;
 }
 
 button{
 width:100%;
 padding:12px;
 margin-top:10px;
-background:#ff8800;
-color:white;
 border:none;
 border-radius:8px;
+background:#ff8800;
+color:white;
+cursor:pointer;
+}
+
+.question{
+background:#222;
+padding:15px;
+border-radius:10px;
+margin-bottom:10px;
+}
+
+.option{
+display:block;
+margin:8px 0;
+padding:10px;
+background:#333;
+border-radius:8px;
+cursor:pointer;
+}
+
+.option.selected{
+background:#555;
 }
 
 .stat{
-font-size:20px;
+display:inline-block;
+width:48%;
+background:#222;
+padding:10px;
+border-radius:10px;
+text-align:center;
 margin-top:10px;
 }
 
+.bad{
+color:#ff4d4d;
+}
+
+.good{
+color:#4dff88;
+}
 </style>
 
 </head>
 
 <body>
 
-<h1>🚛 Patente C Tracker</h1>
+<div class="container">
+
+<h1>🚛 Patente C Exam V1</h1>
 
 <div class="card">
 
-<h3>Study Session</h3>
+<button onclick="startTest()">Start Truck Exam</button>
 
-<input
-id="hours"
-type="number"
-placeholder="Hours studied">
+<div id="quiz"></div>
 
-<input
-id="topics"
-type="number"
-placeholder="Topics completed">
-
-<button onclick="saveStudy()">
-Save Study Session
-</button>
+<button onclick="submitTest()">Submit Exam</button>
 
 </div>
 
 <div class="card">
 
-<h3>Progress</h3>
+<h2>Results</h2>
 
-<div class="stat">
-Hours Studied:
-<span id="studyHours">0</span>
+<div class="stat">Score<br><span id="score">0</span></div>
+<div class="stat">XP<br><span id="xp">0</span></div>
+<div class="stat">Status<br><span id="status">Not Started</span></div>
+
 </div>
 
-<div class="stat">
-Topics Completed:
-<span id="completedTopics">0</span>
-</div>
+<div class="card">
 
-<div class="stat">
-XP:
-<span id="xp">0</span>
-</div>
+<h2>Review Mistakes</h2>
 
-<div class="stat">
-Readiness:
-<span id="readiness">0%</span>
+<div id="review"></div>
+
 </div>
 
 </div>
 
 <script>
 
-let studyHours =
-parseInt(localStorage.getItem("pcHours")) || 0;
+let questions = [
+{q:"What is the main risk with heavy vehicles?", options:["Speed","Long braking distance","Small size","Low fuel"], answer:1},
+{q:"Tachograph is used for:", options:["Speed boost","Driving time control","Fuel saving","Navigation"], answer:1},
+{q:"Overloading a truck affects:", options:["Comfort","Braking and stability","Air conditioning","Radio"], answer:1},
+{q:"Rest time for drivers is:", options:["Optional","Mandatory","Not needed","Only weekends"], answer:1},
+{q:"Heavy vehicle braking distance is:", options:["Shorter","Longer","Same","Random"], answer:1},
+{q:"Cargo must be:", options:["Loose","Properly secured","Heavy at back","Unbalanced"], answer:1},
+{q:"Fatigue while driving:", options:["Improves driving","Reduces attention","No effect","Speeds up reaction"], answer:1},
+{q:"Speed limits for trucks are:", options:["Higher than cars","Lower than cars","Same always","No limits"], answer:1},
+{q:"Best way to prevent accidents in trucks:", options:["Speeding","Rest + safety rules","Ignoring signs","Overloading"], answer:1},
+{q:"Load distribution affects:", options:["Music","Vehicle stability","Air conditioning","Fuel type"], answer:1}
+];
 
-let completedTopics =
-parseInt(localStorage.getItem("pcTopics")) || 0;
+let selected = {};
+let xp = parseInt(localStorage.getItem("pcXPv1")) || 0;
+let wrong = [];
 
-let xp =
-parseInt(localStorage.getItem("pcXP")) || 0;
+function startTest(){
 
-function update(){
+let quiz = document.getElementById("quiz");
+quiz.innerHTML = "";
+selected = {};
+wrong = [];
 
-document.getElementById("studyHours").innerText =
-studyHours;
+let shuffled = questions.sort(()=>Math.random()-0.5);
 
-document.getElementById("completedTopics").innerText =
-completedTopics;
+shuffled.forEach(q=>{
 
-document.getElementById("xp").innerText =
-xp;
+let div = document.createElement("div");
+div.className = "question";
 
-let readiness =
-Math.min(
-100,
-Math.round(
-(completedTopics * 5) +
-(studyHours * 2)
-)
-);
+div.innerHTML = `<p>${q.q}</p>`;
 
-document.getElementById("readiness").innerText =
-readiness + "%";
+q.options.forEach((opt,idx)=>{
 
+let btn = document.createElement("div");
+btn.className = "option";
+btn.innerText = opt;
+
+btn.onclick = () => {
+selected[q.q] = idx;
+btn.classList.add("selected");
+};
+
+div.appendChild(btn);
+
+});
+
+quiz.appendChild(div);
+
+});
+
+document.getElementById("status").innerText = "In Progress";
 }
 
-function saveStudy(){
+function submitTest(){
 
-let hours =
-parseInt(
-document.getElementById("hours").value
-);
+let score = 0;
 
-let topics =
-parseInt(
-document.getElementById("topics").value
-);
+questions.forEach(q=>{
 
-if(
-!hours ||
-hours < 0 ||
-!topics ||
-topics < 0
-){
-alert("Enter valid values.");
-return;
+if(selected[q.q] === q.answer){
+score++;
+}else{
+wrong.push(q);
 }
 
-studyHours += hours;
-completedTopics += topics;
+});
 
-xp += (hours * 10) + (topics * 5);
+let percent = Math.round((score/questions.length)*100);
 
-localStorage.setItem(
-"pcHours",
-studyHours
-);
-
-localStorage.setItem(
-"pcTopics",
-completedTopics
-);
-
-localStorage.setItem(
-"pcXP",
-xp
-);
-
-update();
-
-document.getElementById("hours").value="";
-document.getElementById("topics").value="";
-
-alert("Study session saved!");
-
+if(percent >= 60){
+xp += 40;
+document.getElementById("status").innerText = "PASS ✅";
+}else{
+xp += 15;
+document.getElementById("status").innerText = "FAIL ❌";
 }
 
-update();
+localStorage.setItem("pcXPv1", xp);
+
+document.getElementById("score").innerText = percent + "%";
+document.getElementById("xp").innerText = xp;
+
+// review
+let review = document.getElementById("review");
+review.innerHTML = "";
+
+wrong.forEach(q=>{
+let div = document.createElement("div");
+div.className = "bad";
+div.innerHTML = `
+<b>${q.q}</b><br>
+Correct: ${q.options[q.answer]}
+`;
+review.appendChild(div);
+});
+
+}
 
 </script>
 
