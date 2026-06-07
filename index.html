@@ -14,27 +14,43 @@ body{
     padding:20px;
 }
 
-.container{max-width:900px;margin:auto;}
+h1{
+    text-align:center;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+}
 
 .card{
-    background:#1d1d1d;
-    padding:20px;
-    margin:20px 0;
-    border-radius:15px;
+    background:#1c1c1c;
+    padding:15px;
+    margin:10px 0;
+    border-radius:10px;
 }
 
-button{
-    width:100%;
+a.button{
+    display:block;
+    background:#4a90e2;
+    color:white;
     padding:12px;
     margin:8px 0;
-    border:none;
+    text-align:center;
+    text-decoration:none;
     border-radius:8px;
-    background:#2d6cdf;
-    color:white;
-    cursor:pointer;
+    font-weight:bold;
 }
 
-button:hover{background:#1f4fb0;}
+a.button:hover{
+    background:#357ABD;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+}
 </style>
 </head>
 
@@ -42,21 +58,36 @@ button:hover{background:#1f4fb0;}
 
 <div class="container">
 
-<h1>🇮🇹 Italian Learning Companion</h1>
+<h1>Italian Learning Companion V4</h1>
+
+<div class="card">
+<h2>Dashboard</h2>
+<p>Words Learned: 0</p>
+<p>Progress: 0%</p>
+</div>
 
 <div class="card">
 <h2>Modules</h2>
 
-<!-- IMPORTANT: using ./ (most stable for Vercel) -->
+<!-- IMPORTANT: ALL PATHS POINT TO /v3/ -->
 
-<a href="./v3/conversation.html"><button>Conversation</button></a>
-<a href="./v3/listening.html"><button>Listening</button></a>
-<a href="./v3/speaking.html"><button>Speaking</button></a>
+<a class="button" href="/v3/Conversation.html">Conversation Fluency</a>
+<a class="button" href="/v3/Listening.html">Listening Practice</a>
+<a class="button" href="/v3/speaking.html">Speaking Practice</a>
 
-<a href="./v3/patente-b.html"><button>Patente B</button></a>
-<a href="./v3/patente-c.html"><button>Patente C</button></a>
-<a href="./v3/cqc.html"><button>CQC</button></a>
+<a class="button" href="/v3/Patente-b.html">Patente B</a>
+<a class="button" href="/v3/patente-c.html">Patente C</a>
+<a class="button" href="/v3/cqc.html">CQC</a>
 
+<a class="button" href="/v3/vocabulary.html">Vocabulary Tracker</a>
+<a class="button" href="/v3/lesson1.html">Lesson 1</a>
+<a class="button" href="/v3/lessons.html">All Lessons</a>
+
+</div>
+
+<div class="card">
+<h2>ChatGPT Lesson Prompt</h2>
+<p>Create an Italian lesson for a complete beginner including conversation, listening, speaking, and driving exam preparation.</p>
 </div>
 
 </div>
