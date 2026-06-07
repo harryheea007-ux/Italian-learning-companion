@@ -14,10 +14,7 @@ body{
     padding:20px;
 }
 
-.container{
-    max-width:900px;
-    margin:auto;
-}
+.container{max-width:900px;margin:auto;}
 
 .card{
     background:#1d1d1d;
@@ -26,57 +23,18 @@ body{
     border-radius:15px;
 }
 
-h1,h2{
-    margin:0 0 10px 0;
-}
-
 button{
+    width:100%;
     padding:12px;
+    margin:8px 0;
     border:none;
     border-radius:8px;
-    cursor:pointer;
-    margin:6px 0;
-    width:100%;
-    font-size:16px;
     background:#2d6cdf;
     color:white;
+    cursor:pointer;
 }
 
-button:hover{
-    background:#1f4fb0;
-}
-
-input{
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    border-radius:8px;
-    border:none;
-}
-
-.progress{
-    height:20px;
-    background:#333;
-    border-radius:20px;
-    overflow:hidden;
-}
-
-.progress-bar{
-    height:100%;
-    width:0%;
-    background:green;
-}
-
-.module{
-    background:#2b2b2b;
-    padding:15px;
-    border-radius:10px;
-    margin:10px 0;
-}
-
-a{
-    text-decoration:none;
-}
+button:hover{background:#1f4fb0;}
 </style>
 </head>
 
@@ -84,95 +42,24 @@ a{
 
 <div class="container">
 
-<h1>🇮🇹 Italian Learning Companion V4</h1>
+<h1>🇮🇹 Italian Learning Companion</h1>
 
-<!-- DASHBOARD -->
-<div class="card">
-<h2>Learning Dashboard</h2>
-
-<p>Words Learned: <span id="count">0</span></p>
-
-<div class="progress">
-<div class="progress-bar" id="bar"></div>
-</div>
-
-<p id="coverage">1000 Word Goal Coverage: 0%</p>
-</div>
-
-<!-- VOCAB -->
-<div class="card">
-<h2>Vocabulary Tracker</h2>
-
-<input id="wordInput" placeholder="Add Italian word">
-
-<button onclick="addWord()">Add Word</button>
-
-<ul id="wordList"></ul>
-</div>
-
-<!-- MODULES -->
 <div class="card">
 <h2>Modules</h2>
 
-<a href="v3/conversation.html"><button>🗣 Conversation Fluency</button></a>
-<a href="v3/listening.html"><button>🎧 Listening Practice</button></a>
-<a href="v3/speaking.html"><button>🎤 Speaking Practice</button></a>
+<!-- IMPORTANT: using ./ (most stable for Vercel) -->
 
-<a href="v3/patente-b.html"><button>🚗 Patente B Exam Mode</button></a>
-<a href="v3/patente-c.html"><button>🚚 Patente C Exam Mode</button></a>
-<a href="v3/cqc.html"><button>🏢 CQC Exam Mode</button></a>
+<a href="./v3/conversation.html"><button>Conversation</button></a>
+<a href="./v3/listening.html"><button>Listening</button></a>
+<a href="./v3/speaking.html"><button>Speaking</button></a>
 
-</div>
-
-<!-- MISSION -->
-<div class="card">
-<h2>Current Mission</h2>
-
-<p>
-Reach 1000 Italian words → build fluency → pass Patente B → Patente C → CQC.
-</p>
-</div>
+<a href="./v3/patente-b.html"><button>Patente B</button></a>
+<a href="./v3/patente-c.html"><button>Patente C</button></a>
+<a href="./v3/cqc.html"><button>CQC</button></a>
 
 </div>
 
-<script>
-let words = JSON.parse(localStorage.getItem("words")) || [];
-
-function updateUI(){
-    document.getElementById("count").innerText = words.length;
-
-    let percent = (words.length / 1000) * 100;
-
-    document.getElementById("bar").style.width = percent + "%";
-
-    document.getElementById("coverage").innerText =
-    "1000 Word Goal Coverage: " + percent.toFixed(1) + "%";
-
-    let list = document.getElementById("wordList");
-    list.innerHTML = "";
-
-    words.forEach(word=>{
-        let li=document.createElement("li");
-        li.textContent=word;
-        list.appendChild(li);
-    });
-}
-
-function addWord(){
-    let input=document.getElementById("wordInput");
-
-    if(input.value.trim()!=""){
-        words.push(input.value.trim());
-
-        localStorage.setItem("words", JSON.stringify(words));
-
-        input.value="";
-        updateUI();
-    }
-}
-
-updateUI();
-</script>
+</div>
 
 </body>
 </html>
