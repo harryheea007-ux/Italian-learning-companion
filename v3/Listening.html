@@ -2,160 +2,230 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Italian Listening Trainer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listening V2</title>
 
 <style>
-
 body{
 background:#111;
 color:white;
-font-family:Arial,sans-serif;
+font-family:Arial;
 padding:20px;
 }
 
-h1{
-text-align:center;
+.container{
+max-width:900px;
+margin:auto;
 }
 
 .card{
-background:#222;
-padding:15px;
-border-radius:10px;
-margin-top:15px;
-}
-
-textarea{
-width:100%;
-height:150px;
-background:#333;
-color:white;
-border:none;
-padding:10px;
-margin-top:10px;
+background:#1d1d1d;
+padding:20px;
+border-radius:15px;
+margin-bottom:15px;
 }
 
 button{
 width:100%;
 padding:12px;
-margin-top:10px;
 border:none;
 border-radius:8px;
 background:#28a745;
 color:white;
-font-size:16px;
-}
-
-.score{
-font-size:20px;
-font-weight:bold;
+cursor:pointer;
 margin-top:10px;
 }
 
+select,input{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:8px;
+border:none;
+background:#333;
+color:white;
+}
+
+.storyBox{
+background:#222;
+padding:15px;
+border-radius:10px;
+white-space:pre-wrap;
+}
+
+.stat{
+display:inline-block;
+width:48%;
+background:#222;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
+text-align:center;
+}
 </style>
+
 </head>
 
 <body>
 
-<h1>🎧 Italian Listening Trainer</h1>
+<div class="container">
+
+<h1>🎧 Listening V2</h1>
 
 <div class="card">
 
-<h3>Paste Italian Text</h3>
+<h2>Level</h2>
+<select id="level">
+<option>A1</option>
+<option>A2</option>
+<option>B1</option>
+<option>B2</option>
+</select>
 
-<textarea id="story"
-placeholder="Paste an Italian story from ChatGPT or any source here..."></textarea>
-
-<button onclick="saveStory()">
-Save Story
+<button onclick="generateStory()">
+Generate Story
 </button>
 
 </div>
 
 <div class="card">
 
-<h3>Listening Progress</h3>
+<h2>Story</h2>
+<div id="story" class="storyBox">
+Press "Generate Story"
+</div>
 
-<p>Stories Saved:
-<span id="savedCount">0</span></p>
+<button onclick="copyStory()">
+Copy for @Voice App
+</button>
 
-<p>Listening XP:
-<span id="xp">0</span></p>
+</div>
 
-<p class="score">
-Level:
-<span id="level">A1</span>
-</p>
+<div class="card">
 
-</div><script>
+<h2>Comprehension Check</h2>
 
-let listeningXP =
-parseInt(localStorage.getItem("listeningXP")) || 0;
+<p>1. What is the main topic?</p>
+<input id="q1">
 
-let storiesSaved =
-parseInt(localStorage.getItem("storiesSaved")) || 0;
+<p>2. What happens in the story?</p>
+<input id="q2">
 
-function updateStats(){
+<p>3. What did you understand?</p>
+<input id="q3">
 
-document.getElementById("savedCount").innerText =
-storiesSaved;
+<button onclick="checkAnswers()">
+Check Answers
+</button>
 
-document.getElementById("xp").innerText =
-listeningXP;
+</div>
+
+<div class="card">
+
+<h2>Progress</h2>
+
+<div class="stat">
+Stories<br>
+<span id="stories">0</span>
+</div>
+
+<div class="stat">
+XP<br>
+<span id="xp">0</span>
+</div>
+
+<div class="stat">
+Accuracy<br>
+<span id="acc">0%</span>
+</div>
+
+<div class="stat">
+Level<br>
+<span id="lvl">A1</span>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let stories = parseInt(localStorage.getItem("listStories")) || 0;
+let xp = parseInt(localStorage.getItem("listXP")) || 0;
+let correct = parseInt(localStorage.getItem("listCorrect")) || 0;
+let total = parseInt(localStorage.getItem("listTotal")) || 0;
+
+let currentStory = "";
+
+function generateStory(){
+
+let level = document.getElementById("level").value;
+
+let storiesDB = {
+A1:"Ciao! Marco va al lavoro. Prende il bus ogni giorno. È felice.",
+A2:"Maria lavora in un supermercato. Oggi incontra un cliente difficile ma resta calma.",
+B1:"Un camionista guida da Milano a Roma. La strada è lunga e deve rispettare le regole.",
+B2:"Un autista professionale affronta condizioni difficili mentre trasporta merci importanti attraverso l'Italia."
+};
+
+currentStory = storiesDB[level];
+
+document.getElementById("story").innerText = currentStory;
+
+stories++;
+
+localStorage.setItem("listStories", stories);
+
+update();
+}
+
+function copyStory(){
+navigator.clipboard.writeText(currentStory);
+alert("Copied to clipboard for listening app!");
+}
+
+function checkAnswers(){
+
+let q1 = document.getElementById("q1").value;
+let q2 = document.getElementById("q2").value;
+let q3 = document.getElementById("q3").value;
+
+if(!q1 || !q2 || !q3){
+alert("Answer all questions!");
+return;
+}
+
+let score =
+(q1.length + q2.length + q3.length) / 3;
+
+xp += Math.round(score);
+total++;
+correct += 1;
+
+localStorage.setItem("listXP", xp);
+localStorage.setItem("listCorrect", correct);
+localStorage.setItem("listTotal", total);
+
+update();
+}
+
+function update(){
+
+let acc = total ? Math.round((correct/total)*100) : 0;
+
+document.getElementById("stories").innerText = stories;
+document.getElementById("xp").innerText = xp;
+document.getElementById("acc").innerText = acc + "%";
 
 let level = "A1";
+if(xp > 200) level = "A2";
+if(xp > 600) level = "B1";
+if(xp > 1200) level = "B2";
 
-if(listeningXP > 200) level = "A2";
-if(listeningXP > 500) level = "B1";
-if(listeningXP > 1000) level = "B2";
-
-document.getElementById("level").innerText =
-level;
-
+document.getElementById("lvl").innerText = level;
 }
 
-function saveStory(){
-
-let story =
-document.getElementById("story").value.trim();
-
-if(!story){
-
-alert("Paste a story first.");
-
-return;
-
-}
-
-localStorage.setItem(
-"currentListeningStory",
-story
-);
-
-storiesSaved++;
-
-listeningXP += 15;
-
-localStorage.setItem(
-"storiesSaved",
-storiesSaved
-);
-
-localStorage.setItem(
-"listeningXP",
-listeningXP
-);
-
-updateStats();
-
-alert(
-"Story saved. Copy it into @Voice Aloud Reader and practice listening."
-);
-
-}
-
-updateStats();
+update();
 
 </script>
 
