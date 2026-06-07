@@ -1,1 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>Patente B Tracker</title>
+
+<style>
+
+body{
+background:#111;
+color:white;
+font-family:Arial,sans-serif;
+padding:20px;
+}
+
+h1{
+text-align:center;
+}
+
+.card{
+background:#222;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-top:10px;
+background:#333;
+color:white;
+border:none;
+border-radius:8px;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+background:#0a84ff;
+color:white;
+border:none;
+border-radius:8px;
+}
+
+.stat{
+font-size:20px;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🚗 Patente B Tracker</h1>
+
+<div class="card">
+
+<h3>Study Session</h3>
+
+<input
+id="questions"
+type="number"
+placeholder="Questions studied today">
+
+<input
+id="correct"
+type="number"
+placeholder="Correct answers">
+
+<button onclick="recordSession()">
+Save Session
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>Progress</h3>
+
+<div class="stat">
+Questions:
+<span id="totalQuestions">0</span>
+</div>
+
+<div class="stat">
+Correct:
+<span id="totalCorrect">0</span>
+</div>
+
+<div class="stat">
+Wrong:
+<span id="totalWrong">0</span>
+</div>
+
+<div class="stat">
+XP:
+<span id="xp">0</span>
+</div>
+
+<div class="stat">
+Readiness:
+<span id="readiness">0%</span>
+</div>
+
+</div>
+
+<script>
+
+let totalQuestions =
+parseInt(localStorage.getItem("pbQuestions")) || 0;
+
+let totalCorrect =
+parseInt(localStorage.getItem("pbCorrect")) || 0;
+
+let xp =
+parseInt(localStorage.getItem("pbXP")) || 0;
+
+function update(){
+
+let wrong =
+totalQuestions - totalCorrect;
+
+document.getElementById("totalQuestions").innerText =
+totalQuestions;
+
+document.getElementById("totalCorrect").innerText =
+totalCorrect;
+
+document.getElementById("totalWrong").innerText =
+wrong;
+
+document.getElementById("xp").innerText =
+xp;
+
+let readiness = 0;
+
+if(totalQuestions > 0){
+
+readiness =
+Math.round(
+(totalCorrect / totalQuestions) * 100
+);
+
+}
+
+document.getElementById("readiness").innerText =
+readiness + "%";
+
+}
+
+function recordSession(){
+
+let questions =
+parseInt(
+document.getElementById("questions").value
+);
+
+let correct =
+parseInt(
+document.getElementById("correct").value
+);
+
+if(
+!questions ||
+questions <= 0 ||
+correct < 0
+){
+alert("Enter valid values.");
+return;
+}
+
+totalQuestions += questions;
+totalCorrect += correct;
+
+xp += questions;
+
+localStorage.setItem(
+"pbQuestions",
+totalQuestions
+);
+
+localStorage.setItem(
+"pbCorrect",
+totalCorrect
+);
+
+localStorage.setItem(
+"pbXP",
+xp
+);
+
+update();
+
+document.getElementById("questions").value="";
+document.getElementById("correct").value="";
+
+alert("Session saved!");
+
+}
+
+update();
+
+</script>
+
+</body>
+</html>
