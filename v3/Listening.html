@@ -3,18 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Listening V2</title>
+
+<title>Listening V3</title>
 
 <style>
+
 body{
 background:#111;
 color:white;
 font-family:Arial;
 padding:20px;
+margin:0;
 }
 
 .container{
-max-width:900px;
+max-width:1000px;
 margin:auto;
 }
 
@@ -25,109 +28,73 @@ border-radius:15px;
 margin-bottom:15px;
 }
 
+h1,h2,h3{
+margin-top:0;
+}
+
+select,
+textarea{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+background:#333;
+color:white;
+box-sizing:border-box;
+}
+
 button{
 width:100%;
 padding:12px;
+margin-top:10px;
 border:none;
 border-radius:8px;
-background:#28a745;
+background:#0a84ff;
 color:white;
 cursor:pointer;
-margin-top:10px;
+font-size:16px;
 }
 
-select,input{
-width:100%;
-padding:12px;
-margin-top:10px;
-border-radius:8px;
-border:none;
-background:#333;
-color:white;
+button:hover{
+opacity:0.9;
 }
 
-.storyBox{
-background:#222;
-padding:15px;
-border-radius:10px;
-white-space:pre-wrap;
+.stats{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
 }
 
 .stat{
-display:inline-block;
-width:48%;
 background:#222;
 padding:10px;
 border-radius:10px;
-margin-top:10px;
 text-align:center;
 }
-</style>
 
+@media(max-width:700px){
+
+.stats{
+grid-template-columns:1fr 1fr;
+}
+
+}
+
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>🎧 Listening V2</h1>
-
-<div class="card">
-
-<h2>Level</h2>
-<select id="level">
-<option>A1</option>
-<option>A2</option>
-<option>B1</option>
-<option>B2</option>
-</select>
-
-<button onclick="generateStory()">
-Generate Story
-</button>
-
-</div>
-
-<div class="card">
-
-<h2>Story</h2>
-<div id="story" class="storyBox">
-Press "Generate Story"
-</div>
-
-<button onclick="copyStory()">
-Copy for @Voice App
-</button>
-
-</div>
-
-<div class="card">
-
-<h2>Comprehension Check</h2>
-
-<p>1. What is the main topic?</p>
-<input id="q1">
-
-<p>2. What happens in the story?</p>
-<input id="q2">
-
-<p>3. What did you understand?</p>
-<input id="q3">
-
-<button onclick="checkAnswers()">
-Check Answers
-</button>
-
-</div>
+<h1>🎧 Listening V3</h1>
 
 <div class="card">
 
 <h2>Progress</h2>
 
-<div class="stat">
-Stories<br>
-<span id="stories">0</span>
-</div>
+<div class="stats">
 
 <div class="stat">
 XP<br>
@@ -135,8 +102,13 @@ XP<br>
 </div>
 
 <div class="stat">
-Accuracy<br>
-<span id="acc">0%</span>
+Stories<br>
+<span id="stories">0</span>
+</div>
+
+<div class="stat">
+Fluency<br>
+<span id="fluency">0%</span>
 </div>
 
 <div class="stat">
@@ -148,86 +120,215 @@ Level<br>
 
 </div>
 
+<div class="card">
+
+<h2>Story Builder</h2>
+
+<label>Level</label>
+
+<select id="level">
+
+<option>A1</option>
+<option>A2</option>
+<option>B1</option>
+<option>B2</option>
+
+</select>
+
+<label>Theme</label>
+
+<select id="theme">
+
+<option>Daily Life</option>
+<option>Travel</option>
+<option>Work</option>
+<option>Truck Driving</option>
+<option>Food</option>
+<option>Italian Culture</option>
+<option>Friends</option>
+<option>Adventure</option>
+
+</select>
+
+<label>Length</label>
+
+<select id="length">
+
+<option>800 Words</option>
+<option>1200 Words</option>
+<option>1500 Words</option>
+<option>2000 Words</option>
+
+</select>
+
+<button onclick="generateRequest()">
+Generate Story Request
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Story Request</h2>
+
+<textarea
+id="storyRequest"
+rows="18"
+placeholder="Press Generate Story Request..."
+></textarea>
+
+<button onclick="copyRequest()">
+Copy Request
+</button>
+
+</div>
 <script>
 
-let stories = parseInt(localStorage.getItem("listStories")) || 0;
-let xp = parseInt(localStorage.getItem("listXP")) || 0;
-let correct = parseInt(localStorage.getItem("listCorrect")) || 0;
-let total = parseInt(localStorage.getItem("listTotal")) || 0;
+let xp =
+parseInt(localStorage.getItem("listenV3xp")) || 0;
 
-let currentStory = "";
+let stories =
+parseInt(localStorage.getItem("listenV3stories")) || 0;
 
-function generateStory(){
+function getLevel(){
 
-let level = document.getElementById("level").value;
+if(xp < 200) return "A1";
 
-let storiesDB = {
-A1:"Ciao! Marco va al lavoro. Prende il bus ogni giorno. È felice.",
-A2:"Maria lavora in un supermercato. Oggi incontra un cliente difficile ma resta calma.",
-B1:"Un camionista guida da Milano a Roma. La strada è lunga e deve rispettare le regole.",
-B2:"Un autista professionale affronta condizioni difficili mentre trasporta merci importanti attraverso l'Italia."
-};
+if(xp < 600) return "A2";
 
-currentStory = storiesDB[level];
+if(xp < 1200) return "B1";
 
-document.getElementById("story").innerText = currentStory;
+return "B2";
 
+}
+
+function updateStats(){
+
+let fluency = Math.min(
+100,
+Math.round(
+(stories * 10) +
+(xp / 20)
+)
+);
+
+document.getElementById(
+"xp"
+).innerText = xp;
+
+document.getElementById(
+"stories"
+).innerText = stories;
+
+document.getElementById(
+"fluency"
+).innerText =
+fluency + "%";
+
+document.getElementById(
+"lvl"
+).innerText =
+getLevel();
+
+}
+
+function saveData(){
+
+localStorage.setItem(
+"listenV3xp",
+xp
+);
+
+localStorage.setItem(
+"listenV3stories",
+stories
+);
+
+}
+
+function generateRequest(){
+
+const level =
+document.getElementById(
+"level"
+).value;
+
+const theme =
+document.getElementById(
+"theme"
+).value;
+
+const length =
+document.getElementById(
+"length"
+).value;
+
+const request =
+`ITALIAN IMMERSION STORY REQUEST
+
+Language: Italian
+
+Level:
+${level}
+
+Theme:
+${theme}
+
+Length:
+${length}
+
+Requirements:
+
+- Write entirely in Italian
+- Use high-frequency Italian vocabulary
+- Focus on the 1000 most important Italian words
+- Include realistic dialogue
+- Include descriptions and narration
+- Repeat key vocabulary naturally
+- Make the story immersive and easy to follow
+- Use level-appropriate grammar
+- Include at least 20 vocabulary items with English meanings
+- Include 10 comprehension questions
+
+Output Format:
+
+1. Story
+2. Vocabulary List
+3. Comprehension Questions
+`;
+
+document.getElementById(
+"storyRequest"
+).value = request;
+
+xp += 20;
 stories++;
 
-localStorage.setItem("listStories", stories);
+saveData();
+updateStats();
 
-update();
 }
 
-function copyStory(){
-navigator.clipboard.writeText(currentStory);
-alert("Copied to clipboard for listening app!");
+function copyRequest(){
+
+const text =
+document.getElementById(
+"storyRequest"
+).value;
+
+navigator.clipboard.writeText(text);
+
+alert(
+"Story request copied!"
+);
+
 }
 
-function checkAnswers(){
-
-let q1 = document.getElementById("q1").value;
-let q2 = document.getElementById("q2").value;
-let q3 = document.getElementById("q3").value;
-
-if(!q1 || !q2 || !q3){
-alert("Answer all questions!");
-return;
-}
-
-let score =
-(q1.length + q2.length + q3.length) / 3;
-
-xp += Math.round(score);
-total++;
-correct += 1;
-
-localStorage.setItem("listXP", xp);
-localStorage.setItem("listCorrect", correct);
-localStorage.setItem("listTotal", total);
-
-update();
-}
-
-function update(){
-
-let acc = total ? Math.round((correct/total)*100) : 0;
-
-document.getElementById("stories").innerText = stories;
-document.getElementById("xp").innerText = xp;
-document.getElementById("acc").innerText = acc + "%";
-
-let level = "A1";
-if(xp > 200) level = "A2";
-if(xp > 600) level = "B1";
-if(xp > 1200) level = "B2";
-
-document.getElementById("lvl").innerText = level;
-}
-
-update();
+updateStats();
 
 </script>
+
+</div>
 
 </body>
 </html>
